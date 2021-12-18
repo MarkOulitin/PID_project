@@ -19,6 +19,7 @@ namespace ConsoleApp2
     {
         static void Main(string[] args)
         {
+            Double set_point = 46;
             Console.WriteLine("Started...");
             HttpClient httpClient = createClient();
             using (var opcClient = new OpcClient("opc.tcp://localhost:4840"))
@@ -40,19 +41,35 @@ namespace ConsoleApp2
                 sensors_enumerator.MoveNext();
                 OpcNodeInfo sensor = sensors_enumerator.Current;
                 Tuple<List<DateTime>, List<Double>> samples = sample(5, sensor, opcClient);
-                findInflectionGradient(httpClient, samples);
+                ((Double, Double), Double) inflection_gradient = findInflectionGradient(httpClient, samples);
+                (Double, Double, Double) pid = recommendPID(set_point, inflection_gradient.Item1, inflection_gradient.Item2);
             }
             httpClient.Dispose();
         }
 
-        private static async void findInflectionGradient(HttpClient httpClient, Tuple<List<DateTime>, List<Double>> samples)
+        private static (Double, Double, Double) recommendPID(Double set_point, (Double, Double) inflection, Double gradient)
+        {
+            // inflection: point where 2nd derivative = 0 and closest to origin
+            // gradient: the gradient at the point
+            // Ziegler Nicols method
+            // tangent: y - y1 = m(x - x1)
+            // tangent_inversed: (y - y1 + mx1)/m = x
+            Func<Double, Double> tangent_inversed = output => (output - inflection.Item2 + gradient * inflection.Item1) / gradient;
+            Double L = tangent_inversed(0);
+            Double T = tangent_inversed(set_point) - L;
+            Double K_p = 1.2 * (T/L);
+            Double K_i = 2 * L;
+            Double K_d = 0.5 * L;
+            return (K_p, K_i, K_d);
+        }
+
+        private static async ((Double, Double), Double) findInflectionGradient(HttpClient httpClient, Tuple<List<DateTime>, List<Double>> samples)
         {
             string data = prepareJson(samples);
             StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
             HttpResponseMessage response = await httpClient.PostAsync("http://127.0.0.1:5000/", content);
-            string responseString = await response.Content.ReadAsStringAsync();
-            JObject response_json = JObject.Parse(responseString);
-            Console.WriteLine(response_json);
+            JObject response_content = JObject.Parse(await response.Content.ReadAsStringAsync());
+            return ((1, 1), 1);
         }
 
         private static HttpClient createClient()

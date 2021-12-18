@@ -19,11 +19,12 @@ OUTPUT_ARGUMENT_MISSING = "output argument not provided"
 BAD_SIZE_OF_ARGUMENTS = "Lengths of parameter arrays is different"
 DATE_TIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
 
-
 '''
 Random output generator
 '''
-#
+
+
+
 # def generate_points(f=poly1d([1,0,0,100]), n=1000):
 #     times = []
 #     for i in range(n):
@@ -43,10 +44,10 @@ Random output generator
 # #           '2021-12-18T10:58:03.046381Z']}
 # time, value = generate_points()
 
-#TODO make it safer for data
-def interpolate_data(xs, ys, slope_thresh = 10**(-3)):
-    plt.plot(xs, ys)
-    plt.show()
+# TODO make it safer for data
+def interpolate_data(xs, ys, slope_thresh=10 ** (-3)):
+    # plt.plot(xs, ys)
+    # plt.show()
     func = interpolate.UnivariateSpline(xs, ys)
     derivate_once = func.derivative(n=1)
     derivated_twice = derivate_once.derivative(n=1)
@@ -88,8 +89,8 @@ def find_inflection_point_with_gradient():
     if err_message:
         abort(500, err_message)
     response = {
-        'inflection': point, # (x,y)
-        'gradient': slope, # the gradient at (x,y)
+        'inflection': point,  # (x,y)
+        'gradient': slope,  # the gradient at (x,y)
     }
 
     return jsonify(response)
@@ -107,3 +108,7 @@ def check_data_validity(data):
 if __name__ == '__main__':
     port = 5000 if len(sys.argv) <= 1 or not sys.argv[1].isnumeric() else int(sys.argv[1])
     app.run(debug=False, port=port)
+    # d = normalize_data({"time": time, "output": value})
+    # now = datetime.now()
+    # interpolate_data(d["time"], d["output"])
+    # print("diff is {}".format(datetime.now() - now))

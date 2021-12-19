@@ -37,16 +37,32 @@ namespace ConsoleApp2
             setupMathAPI();
             using (var client = new OpcClient(opc_url))
             {
-                Console.WriteLine("Connecting...");
-                client.Connect();
-                Console.WriteLine("Connected!");
+                ConnectClient(client);
                 List<OpcNodeInfo> plcs = discoverPLCS(client);
-                List<OpcNodeId> plc_ids = new List<OpcNodeId>();
-                plcs.ForEach(plc => plc_ids.Add(plc.NodeId));
-                _pool = SamplePool.Init(plc_ids);
+                List<OpcNodeId> plc_ids = ExtractPlcIDs(plcs);
+                InitPool(plc_ids);
                 Sampler sampler = Sampler.Create(opc_url, plcs[0], pool);
                 cli(plc_ids);
             }
+        }
+
+        private static void InitPool(List<OpcNodeId> plc_ids)
+        {
+            _pool = SamplePool.Init(plc_ids);
+        }
+
+        private static List<OpcNodeId> ExtractPlcIDs(List<OpcNodeInfo> plcs)
+        {
+            List<OpcNodeId> plc_ids = new List<OpcNodeId>();
+            plcs.ForEach(plc => plc_ids.Add(plc.NodeId));
+            return plc_ids;
+        }
+
+        private static void ConnectClient(OpcClient client)
+        {
+            Console.WriteLine("Connecting...");
+            client.Connect();
+            Console.WriteLine("Connected!");
         }
 
         private static void readConfig()

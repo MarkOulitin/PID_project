@@ -108,9 +108,9 @@ def check_data_validity(data):
 
 
 if __name__ == '__main__':
-    # port = 5000 if len(sys.argv) <= 1 or not sys.argv[1].isnumeric() else int(sys.argv[1])
-    # app.run(debug=False, port=port)
-    d = normalize_data({"time": time, "output": value})
-    now = datetime.now()
-    print(interpolate_data(d["time"], d["output"]))
+    port = 5000 if len(sys.argv) <= 1 or not sys.argv[1].isnumeric() else int(sys.argv[1])
+    app.run(debug=False, port=port)
+    # d = normalize_data({"time": time, "output": value})
+    # now = datetime.now()
+    # print(interpolate_data(d["time"], d["output"]))
     # print("diff is {}".format(datetime.now() - now))

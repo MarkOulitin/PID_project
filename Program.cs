@@ -21,7 +21,7 @@ namespace ConsoleApp2
         public static readonly string opc_url = "opc.tcp://localhost:4840";
         public static string opc_ip = "localhost";
         public static string opc_port = "4840";
-        public static string MathAPI_port = "localhost";
+        public static string MathAPI_port = "5000";
         public static string System_port = "localhost";
 
         private static SamplePool _pool = null;
@@ -36,20 +36,20 @@ namespace ConsoleApp2
         {
             readConfig();
             setupMathAPI();
-            using (var client = new OpcClient(opc_url))
-            {
-                ConnectClient(client);
-                List<OpcNodeInfo> plcs = discoverPLCS(client);
-                List<OpcNodeId> plc_ids = ExtractPlcIDs(plcs);
-                //---------------------- Delete: -----------------------------
-                //List < OpcNodeInfo > plcs= new();
-                //List<OpcNodeId> plc_ids = new();
-                //plc_ids.Add(new OpcNodeId(new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 }));
-                //--------------------- /Delete: -----------------------------
-                InitPool(plc_ids);
-                Sampler sampler = Sampler.Create(opc_url, plcs[0], pool);
-                GUI.cliAsync(plc_ids, plcs, client,pool);
-            }
+            PythonServer server = new PythonServer(int.Parse(MathAPI_port), new HttpClient());
+            OpcClient opcClient = new OpcClient();
+            using var client = new OpcClient(opc_url);
+            ConnectClient(client);
+            List<OpcNodeInfo> plcs = discoverPLCS(client);
+            List<OpcNodeId> plc_ids = ExtractPlcIDs(plcs);
+            //---------------------- Delete: -----------------------------
+            //List < OpcNodeInfo > plcs= new();
+            //List<OpcNodeId> plc_ids = new();
+            //plc_ids.Add(new OpcNodeId(new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 }));
+            //--------------------- /Delete: -----------------------------
+            InitPool(plc_ids);
+            Sampler sampler = Sampler.Create(opc_url, plcs[0], pool, opcClient);
+            GUI.cliAsync(plc_ids, plcs, client, pool, server);
         }
 
         private static void InitPool(List<OpcNodeId> plc_ids)

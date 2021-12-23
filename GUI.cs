@@ -12,7 +12,7 @@ namespace ConsoleApp2
     {
         private static int QUIT = -1;
 
-        public static async void cliAsync(List<OpcNodeId> plc_ids, List<OpcNodeInfo> plcs, OpcClient client,SamplePool pool)
+        public static async void cliAsync(List<OpcNodeId> plc_ids, List<OpcNodeInfo> plcs, OpcClient client,SamplePool pool, PythonServer server)
         {
             int chosenIndex = 0;
             while (chosenIndex != -1)
@@ -24,7 +24,7 @@ namespace ConsoleApp2
                 }
                 double setPoint = promtSetpointLoop();
                 OpcNodeId chosenNode = plc_ids[chosenIndex];
-                PIDTask task = PIDTask.Create(chosenNode, setPoint, pool);
+                PIDTask task = PIDTask.Create(chosenNode, setPoint, pool, server);
                 (double, double, double) recommendation = await task.recommendPID(); //TODO should await?
                                                                                      // (double, double, double) recommendation = (1.1, 1.2, 1.3);
                 PrintRecommendation(recommendation);

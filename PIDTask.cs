@@ -17,7 +17,7 @@ namespace ConsoleApp2
     {
         public static int MathPort = 5000;
         private Double _setPoint;
-        private HttpClient _httpClient;
+        private PythonServer _mathServer;
         private SamplePool _pool;
         private OpcNodeId _plc;
         public Double setPoint 
@@ -28,27 +28,27 @@ namespace ConsoleApp2
             }
         }
 
-        private PIDTask(OpcNodeId plc, Double setPoint, HttpClient httpClient, SamplePool pool)
+        private PIDTask(OpcNodeId plc, Double setPoint, PythonServer mathServer, SamplePool pool)
         {
             this._setPoint = setPoint;
-            this._httpClient = httpClient;
+            this._mathServer = mathServer;
             this._pool = pool;
             this._plc = plc;
         }
 
-        public static PIDTask Create(OpcNodeId plc, Double setPoint, SamplePool pool, HttpClient httpClient)
+        public static PIDTask Create(OpcNodeId plc, Double setPoint, SamplePool pool, PythonServer mathServer)
         {
-            return new PIDTask(plc, setPoint, httpClient, pool);
+            return new PIDTask(plc, setPoint, mathServer, pool);
         }
 
         public void Dispose()
         {
-            this._httpClient.Dispose();
+            this._mathServer.Dispose();
         }
 
         public async Task<(Double, Double, Double)> recommendPID()
         {
-            ((Double, Double), Double) inflection_gradient = await FindInflectionGradient(_pool.getSamples(this._plc));
+            ((Double, Double), Double) inflection_gradient = await _mathServer.FindInflectionGradient(_pool.getSamples(this._plc));
             return CalculatePID(inflection_gradient.Item1, inflection_gradient.Item2);
         }
 
@@ -67,26 +67,6 @@ namespace ConsoleApp2
             Double K_d = 0.5 * L;
             return (K_p, K_i, K_d);
         }
-
-        private async Task<((Double, Double), Double)> FindInflectionGradient((List<DateTime>, List<Double>) samples)
-        //private static async ((Double, Double), Double) findInflectionGradient(HttpClient httpClient, Tuple<List<DateTime>, List<Double>> samples)
-        {
-            string data = PrepareJson(samples);
-            StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await this._httpClient.PostAsync($"http://127.0.0.1:{MathPort}/", content);
-            JObject response_content = JObject.Parse(await response.Content.ReadAsStringAsync());
-            // TODO 
-            return ((0,0), 0);
-        }
-
-        private static string PrepareJson((List<DateTime>, List<Double>) samples)
-        {
-            JObject data = new JObject();
-            data.Add("time", new JArray(samples.Item1));
-            data.Add("output", new JArray(samples.Item2));
-            return data.ToString(Formatting.None);
-        }
-
        
     }
 }

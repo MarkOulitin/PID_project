@@ -18,28 +18,29 @@ namespace ConsoleApp2
         private List<Tuple<DateTime, Double>> _samples;
         private System.Timers.Timer _timer;
         private SamplePool _pool;
-        private Sampler(OpcClient client, OpcNodeInfo sensor, SamplePool pool)
+        private Sampler(OpcClient client, OpcNodeInfo sensor, SamplePool pool, double interval = 1000)
         {
             this._sensor = sensor;
             this._client = client;
             this._pool = pool;
             this._samples = new List<Tuple<DateTime, double>>();
             this._timer = new System.Timers.Timer();
-            this._timer.Interval = 1000;
+            this._timer.Interval = interval;
             this._timer.Elapsed += Sample;
             this._timer.AutoReset = true;
         }
 
-        public static Sampler Create(string url, OpcNodeInfo sensor, SamplePool pool)
+        public static Sampler Create(string url, OpcNodeInfo sensor, SamplePool pool, OpcClient client)
         {
-            OpcClient client = new OpcClient(url);
             client.Connect();
             return new Sampler(client, sensor, pool);
         }
+
         public void sample()
         {
             this._timer.Enabled = true;
         }
+
         private void Sample(Object source, ElapsedEventArgs e)
         {
             Tuple<DateTime, Double> data_point = Poll(this._client, this._sensor);

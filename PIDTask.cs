@@ -27,6 +27,7 @@ namespace ConsoleApp2
                 return _setPoint;
             }
         }
+
         private PIDTask(OpcNodeId plc, Double setPoint, HttpClient httpClient, SamplePool pool)
         {
             this._setPoint = setPoint;
@@ -35,9 +36,8 @@ namespace ConsoleApp2
             this._plc = plc;
         }
 
-        public static PIDTask Create(OpcNodeId plc, Double setPoint, SamplePool pool)
+        public static PIDTask Create(OpcNodeId plc, Double setPoint, SamplePool pool, HttpClient httpClient)
         {
-            HttpClient httpClient = new HttpClient();
             return new PIDTask(plc, setPoint, httpClient, pool);
         }
 

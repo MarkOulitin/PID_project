@@ -4,9 +4,11 @@ from sqlite3 import Connection
 from typing import List
 
 from dao.constants import db_name
-from dao.plc import row_to_plc
-from dao.request import Request, row_to_request
-from dao.sample import Sample, row_to_sample
+from plc import PLC, row_to_plc
+from queryrequest import QueryRequest, row_to_request
+from sample import Sample, row_to_sample
+
+conn = None
 
 
 def initialize():
@@ -47,10 +49,10 @@ def initialize():
     return conn
 
 
-def create_request(request: Request, conn: Connection):
+def create_request(request: QueryRequest, conn: Connection):
     conn.cursor().execute("""
         INSERT INTO REQUESTS(request_id, timestamp, plcid, setpoint, p, i, d)
-        VALUES(?, ?, ?, ?, ?, ?, ?)
+        VALUES(?, ?, ?, ?, ?, ?, ?,)
     """, (request.plc_id, request.timestamp, request.plc_id, request.setpoint, request.p, request.i, request.d))
     conn.commit()
 
@@ -96,4 +98,9 @@ def get_all_plcs(conn: Connection):
     return list(map(lambda row: row_to_plc(row), rows))
 
 
-initialize()
+class DB:
+    def __init__(self):
+        self.conn = initialize()
+
+    def create_request(self, request: QueryRequest):
+        create_request(request, self.conn)

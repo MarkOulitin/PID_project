@@ -1,4 +1,4 @@
-class Plc:
+class PLC:
     def __init__(self, plc_id, name, type, sim_metadata):
         self.plc_id = plc_id
         self.name = name
@@ -7,4 +7,4 @@ class Plc:
 
 
 def row_to_plc(row):
-    return Plc(*tuple(row))
+    return PLC(*tuple(row))

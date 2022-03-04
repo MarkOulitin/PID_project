@@ -1,4 +1,4 @@
-from types import RecommendationRequest
+from recommendation_types import RecommendationRequest
 
 
 class Recommendation:

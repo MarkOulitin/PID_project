@@ -1,6 +1,7 @@
 import uuid
 
 from flask import Request
+import json
 
 
 class QueryRequest:
@@ -49,13 +50,16 @@ def row_to_request(row):
 
 def flask_request_to_request(request: Request):
     args = request.args
+    query_data, pid_values, time_value = json.loads(args['queryData']), \
+                                      json.loads(args['pidValues']), \
+                                      json.loads(args['timeValue'])
     return QueryRequest(
         id=str(uuid.uuid4()),
-        value_path=args.get("value_path"),
-        value_min=args.get("value_min"),
-        value_max=args.get("value_max"),
-        set_point_path=args.get("set_point_path"),
-        set_point_min=args.get("set_point_min"),
+        value_path=query_data['valPath']['path'],
+        value_min=query_data['valPath']['minVal'],
+        value_max=query_data['valPath']['maxVal'],
+        set_point_path=query_data['setpointPath']['path'],
+        set_point_min=query_data['setpointPath']['minVal'],
         set_point_max=args.get("set_point_max"),
         pid_path=args.get("pid_path"),
         pid_min=args.get("pid_min"),

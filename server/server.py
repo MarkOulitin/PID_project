@@ -3,8 +3,10 @@ from flask import Flask, request, jsonify
 import queryrequest
 import simulator_mock
 from dao.dal import DB
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 
 class Server:

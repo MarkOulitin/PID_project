@@ -51,25 +51,25 @@ def row_to_request(row):
 def flask_request_to_request(request: Request):
     args = request.args
     query_data, pid_values, time_value = json.loads(args['queryData']), \
-                                      json.loads(args['pidValues']), \
-                                      json.loads(args['timeValue'])
+                                         json.loads(args['pidValues']), \
+                                         json.loads(args['timeValue'])
     return QueryRequest(
         id=str(uuid.uuid4()),
-        value_path=query_data['valPath']['path'],
-        value_min=query_data['valPath']['minVal'],
-        value_max=query_data['valPath']['maxVal'],
-        set_point_path=query_data['setpointPath']['path'],
-        set_point_min=query_data['setpointPath']['minVal'],
-        set_point_max=args.get("set_point_max"),
-        pid_path=args.get("pid_path"),
-        pid_min=args.get("pid_min"),
-        pid_max=args.get("pid_max"),
-        pid_value_path=args.get("pid_value_path"),
-        pid_value_min=args.get("pid_value_min"),
-        pid_value_max=args.get("pid_value_max"),
-        p=args.get("p"),
-        i=args.get("i"),
-        d=args.get("d"),
-        simulation_minutes=args.get("simulation_minutes"),
-        simulation_seconds=args.get("simulation_seconds")
+        value_path=query_data['valPath'].get('path'),
+        value_min=query_data['valPath'].get('minVal'),
+        value_max=query_data['valPath'].get('maxVal'),
+        set_point_path=query_data['setpointPath'].get('path'),
+        set_point_min=query_data['setpointPath'].get('minVal'),
+        set_point_max=query_data['setpointPath'].get('maxVal'),
+        pid_path=query_data["pidPath"].get("path"),
+        pid_min=query_data["pidPath"].get("minVal"),
+        pid_max=query_data["pidPath"].get("maxVal"),
+        pid_value_path=query_data["pidValuePath"].get("path"),
+        pid_value_min=query_data["pidValuePath"].get("minVal"),
+        pid_value_max=query_data["pidValuePath"].get("maxVal"),
+        p=pid_values.get("pVal"),
+        i=pid_values.get("iVal"),
+        d=pid_values.get("dVal"),
+        simulation_minutes=time_value.get("minutes"),
+        simulation_seconds=time_value.get("seconds")
     )

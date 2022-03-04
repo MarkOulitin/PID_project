@@ -12,7 +12,7 @@ class PID:
         self.d = d
 
 
-class SimulationData: # each represents an entry in samples db
+class SimulationData:  # each represents an entry in samples db
     def __init__(self,
                  timestamp: Number,
                  pid: PID,
@@ -37,3 +37,8 @@ class RecommendationRequest:
         self.pid = pid
         self.convergence_time = convergence_time
         self.simulation_data = simulation_data
+
+
+class PLC:
+    def __init__(self, name):
+        self.name = name

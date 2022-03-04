@@ -1,106 +1,47 @@
 import sqlite3
+from numbers import Number
 from sqlite3 import Connection
 
 from typing import List
 
-from dao.constants import db_name
-from plc import PLC, row_to_plc
+from dao.constants import db_name, plc_create_statement, requests_create_statement, samples_create_statement
 from queryrequest import QueryRequest, row_to_request
-from sample import Sample, row_to_sample
-
-conn = None
 
 
 def initialize():
     conn = sqlite3.connect(db_name)
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS "PLC" (
-            "plcid"	INTEGER,
-            "name"	BLOB,
-            "plctype"	TEXT,
-            "simulation_metadata"	TEXT,
-            PRIMARY KEY("plcid")
-    );
-    """)
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS "requests" (
-            "requestid"	INTEGER,
-            "timestamp"	NUMERIC,
-            "plcid"	INTEGER,
-            "setpoint"	REAL,
-            "P"	REAL,
-            "I"	REAL,
-            "D"	REAL,
-            FOREIGN KEY("plcid") REFERENCES "PLC"("plcid"),
-            PRIMARY KEY("requestid")
-    );
-    """)
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS "Samples" (
-            "sample_id"	INTEGER,
-            "timestamp"	NUMERIC,
-            "plcid"	INTEGER,
-            "setpoint"	REAL,
-            "sensor_value"	REAL,
-            PRIMARY KEY("sample_id"),
-            FOREIGN KEY("plcid") REFERENCES "PLC"("plcid")
-    );
-    """)
-    return conn
+    conn.execute(plc_create_statement)
+    conn.execute(requests_create_statement)
+    conn.execute(samples_create_statement)
+    conn.close()
 
 
-def create_request(request: QueryRequest, conn: Connection):
-    conn.cursor().execute("""
-        INSERT INTO REQUESTS(request_id, timestamp, plcid, setpoint, p, i, d)
-        VALUES(?, ?, ?, ?, ?, ?, ?,)
-    """, (request.plc_id, request.timestamp, request.plc_id, request.setpoint, request.p, request.i, request.d))
-    conn.commit()
+def insert_plcs(PLCs: List[PLC]):  # TODO insert objects
+    pass
 
 
-def get_requests_for_plc(plc_id, conn: Connection):
-    conn.cursor().execute("""
-        SELECT * FROM REQUESTS WHERE PLCID = ?
-    """, (plc_id,))
-    rows = conn.cursor().fetchall()
-    return list(map(lambda row: row_to_request(row), rows))
+def create_request(request: QueryRequest, conn: Connection):  # TODO insert request object
+    pass
+    # conn.cursor().execute("""
+    #     INSERT INTO REQUESTS(request_id, timestamp, plcid, setpoint, p, i, d)
+    #     VALUES(?, ?, ?, ?, ?, ?, ?,)
+    # """, (request.plc_id, request.timestamp, request.plc_id, request.setpoint, request.p, request.i, request.d))
+    # conn.commit()
+    # conn.close()
 
 
-def create_samples(samples: List[Sample], conn: Connection):
-    for sample in samples:
-        conn.cursor().execute("""
-            INSERT INTO SAMPLE(sample_id, timestamp, plcid, setpoint, sensor_value)
-            VALUES(?, ?, ?, ?, ?)
-        """, (sample.sample_id, sample.timestamp, sample.plc_id, sample.setpoint, sample.sensor_value))
-    conn.commit()
-
-
-def get_sample_since(plc_id, timestamp, conn: Connection):
-    conn.cursor().execute("""
-        SELECT * FROM REQUESTS WHERE PLCID = ? AND TIMESTAMP > timestamp 
-    """, (plc_id, timestamp))
-    rows = conn.cursor().fetchall()
-    return list(map(lambda row: row_to_sample(row), rows))
-
-
-def create_plc(plc: PLC, conn: Connection):
-    conn.cursor().execute("""
-        INSERT INTO PLC(plcid, name, plctype,simulation_metadata)
-        VALUES(?, ?, ?, ?)
-    """, (plc.plc_id, plc.name, plc.type, plc.sim_metadata))
-    conn.commit()
-
-
-def get_all_plcs(conn: Connection):
-    conn.cursor().execute("""
-        SELECT * FROM PLC 
-    """)
-    rows = conn.cursor().fetchall()
-    return list(map(lambda row: row_to_plc(row), rows))
+def get_samples_since(plc_path: str,
+                      seconds_back: Number,
+                      conn: Connection):  # TODO get samples 'seconds_back' seconds from the past until now, ordered by timestamp. return object of type SimulationData
+    return []
 
 
 class DB:
     def __init__(self):
-        self.conn = initialize()
+        initialize()
 
     def create_request(self, request: QueryRequest):
-        create_request(request, self.conn)
+        create_request(request, sqlite3.connect(db_name))
+
+    def get_samples_since(self, plc_path: str, seconds_back: Number = 24 * 60 * 60):
+        get_samples_since(plc_path, seconds_back, sqlite3.connect(db_name))

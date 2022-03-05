@@ -50,10 +50,10 @@ class PidDataPoints:
 
 class RecommendationResult:
     def __init__(self,
-                 old_pid,
-                 old_pid_data_points,
-                 recommended_pid,
-                 recommended_pid_data_points,
+                 old_pid: PID,
+                 old_pid_data_points: PidDataPoints,
+                 recommended_pid: PID,
+                 recommended_pid_data_points: PidDataPoints,
                  ) -> None:
         self.old_pid = old_pid
         self.old_pid_data_points = old_pid_data_points

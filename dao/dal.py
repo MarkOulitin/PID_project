@@ -1,11 +1,12 @@
 import sqlite3
 from numbers import Number
 from sqlite3 import Connection
-
 from typing import List
 
 from dao.constants import db_name, plc_create_statement, requests_create_statement, samples_create_statement
-from queryrequest import QueryRequest, row_to_request
+from queryrequest import QueryRequest
+from recommendation_types import PLC, PID
+from sample import Sample
 
 
 def initialize():
@@ -44,4 +45,6 @@ class DB:
         create_request(request, sqlite3.connect(db_name))
 
     def get_samples_since(self, plc_path: str, seconds_back: Number = 24 * 60 * 60):
-        get_samples_since(plc_path, seconds_back, sqlite3.connect(db_name))
+        return [Sample(1, 2, 3.0, 4.0, 5.0, 90182573, PID(1., 2., 3.)),
+                Sample(1, 2, 3.0, 4.0, 5.0, 90182575, PID(1., 2., 3.))]
+        # get_samples_since(plc_path, seconds_back, sqlite3.connect(db_name))

@@ -33,7 +33,7 @@ requests_create_statement = """
     """
 
 samples_create_statement = """
-        CREATE TABLE "Samples" (
+        CREATE TABLE IF NOT EXISTS "Samples" (
             "SampleId"	INTEGER,
             "PlcId"	INTEGER,
             "ProcessValue"	REAL,

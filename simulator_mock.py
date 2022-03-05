@@ -1,4 +1,4 @@
-from simulator_response import SimulatorResponse
+from recommendation_response import SimulatorResponse
 from queryrequest import QueryRequest
 
 

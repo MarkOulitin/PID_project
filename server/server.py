@@ -4,7 +4,7 @@ import queryrequest
 from fetcher_fascade import FetcherFascade
 from queryrequest import QueryRequest
 from dao.dal import DB
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 
 from recommendation_response import recommendation_response_from_recommendation_result, RecommendationResponse
 from recommendation_system.algorithm_impl.ziegler_nochols import ZieglerNichols
@@ -30,7 +30,8 @@ class Server:
     def query_endpoint(self):
         query_request = queryrequest.flask_request_to_request(request)
         result = self.query(query_request)
-        return jsonify(result.__dict__)
+        ret = jsonify(result.__dict__)
+        return ret
 
     def build_recommendation_request(self, query_request: QueryRequest):
         p, i, d = self.fetcher.fetch_pid(query_request.pid_path)
@@ -50,6 +51,7 @@ server = Server()
 
 
 @app.route(rule='/', methods=('GET', 'POST'))
+@cross_origin()
 def act():
     return server.query_endpoint()
 

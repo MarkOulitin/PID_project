@@ -22,8 +22,8 @@ def recommendation_response_from_recommendation_result(rec: RecommendationResult
     current_p, current_i, current_d = rec.old_pid.p, rec.old_pid.i, rec.old_pid.d
     recommended_p, recommended_i, recommeneded_d = rec.recommended_pid.p, rec.recommended_pid.i, rec.recommended_pid.d
     set_point = set_point
-    graph_before = zip(rec.old_pid_data_points.time, rec.old_pid_data_points.amplitude)
-    graph_after = zip(rec.recommended_pid_data_points.time, rec.recommended_pid_data_points.amplitude)
+    graph_before = list(zip(rec.old_pid_data_points.time, rec.old_pid_data_points.amplitude))
+    graph_after = list(zip(rec.recommended_pid_data_points.time, rec.recommended_pid_data_points.amplitude))
     return RecommendationResponse(
         current_p, 
         current_i, 

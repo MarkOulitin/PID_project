@@ -1,3 +1,4 @@
+import datetime
 import sqlite3
 from numbers import Number
 from sqlite3 import Connection
@@ -34,7 +35,16 @@ def create_request(request: QueryRequest, conn: Connection):  # TODO insert requ
 def get_samples_since(plc_path: str,
                       seconds_back: Number,
                       conn: Connection):  # TODO get samples 'seconds_back' seconds from the past until now, ordered by timestamp. return object of type SimulationData
-    return []
+    from_datetime = datetime.datetime.now() - datetime.timedelta(seconds=seconds_back)  # TODO check type Number
+    from_timestamp = from_datetime.strftime('%Y-%m-%d %H:%M:%S')
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT * FROM  PLC
+        WHERE PlcPath = ? AND Timestamp >= ?
+        ORDER BY Timestamp
+    """, (plc_path, from_timestamp))
+    result = cursor.fetchall()
+    return result  # TODO maybe reverse?
 
 
 class DB:

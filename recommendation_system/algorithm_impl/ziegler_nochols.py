@@ -1,6 +1,7 @@
 
 
 from recommendation_system.recommendation_algorithm import Algorithm
+from recommendation_types import PID
 
 
 class ZieglerNichols(Algorithm):
@@ -9,5 +10,4 @@ class ZieglerNichols(Algorithm):
         super().__init__()
     
     def recomend(self):
-        
-        return
+        return PID(1.1, 0.5, 1.4)

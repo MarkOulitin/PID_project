@@ -7,7 +7,7 @@ from dao.dal import DB
 from queryrequest import QueryRequest
 from server.server import Server
 from simulator_mock import Simulator
-from simulator_response import SimulatorResponse
+from recommendation_response import SimulatorResponse
 
 
 class MockDB(DB):

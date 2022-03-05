@@ -7,3 +7,6 @@ class FetcherFascade:
 
     def fetch_set_point(self, set_point_path):
         return 1.
+
+    def fetch_current_signal(self, value_path):
+        return 1.

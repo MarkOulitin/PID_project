@@ -33,12 +33,14 @@ class Server:
         p, i, d = self.fetcher.fetch_pid(query_request.pid_path)
         pid = PID(p, i, d)
         set_point = self.fetcher.fetch_set_point(query_request.set_point_path)
+        current_sensor_value = self.fetcher.fetch_current_signal(query_request.value_path)
         convergence_time = query_request.simulation_seconds + (query_request.simulation_minutes * 60)
         simulation_data = db.get_samples_since(query_request.value_path)
         return RecommendationRequest(set_point,
                                      pid,
                                      convergence_time,
-                                     simulation_data)
+                                     simulation_data,
+                                     current_sensor_value)
 
 
 server = Server()

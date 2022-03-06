@@ -11,7 +11,7 @@ plc_create_statement = """
 requests_create_statement = """
         CREATE TABLE IF NOT EXISTS "Requests" (
             "id"	TEXT,
-            "\ValuePath"	TEXT,
+            "ValuePath"	TEXT,
             "ValueMin"	REAL,
             "ValueMax"	REAL,
             "SetPointPath"	TEXT,
@@ -26,8 +26,8 @@ requests_create_statement = """
             "P"	REAL,
             "I"	REAL,
             "D"	REAL,
-            "SimulationMinutes"	REAL,
-            "SimulationSeconds"	BLOB,
+            "SimulationMinutes"	INTEGER,
+            "SimulationSeconds"	INTEGER,
             PRIMARY KEY("id")
         )
     """

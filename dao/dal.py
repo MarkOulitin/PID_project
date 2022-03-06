@@ -29,13 +29,15 @@ def create_request(request: QueryRequest, conn: Connection):  # TODO insert requ
     # conn.cursor().execute("""
     #     INSERT INTO REQUESTS(request_id, timestamp, plcid, setpoint, p, i, d)
     #     VALUES(?, ?, ?, ?, ?, ?, ?,)
+    # invert into Plcs(path)
+    #     values(...)
     # """, (request.plc_id, request.timestamp, request.plc_id, request.setpoint, request.p, request.i, request.d))
     # conn.commit()
     # conn.close()
 
 
 def get_samples_since(plc_path: str,
-                      seconds_back: Number,
+                      seconds_back: int,
                       conn: Connection):  # TODO get samples 'seconds_back' seconds from the past until now, ordered by timestamp. return object of type SimulationData
     from_datetime = datetime.datetime.now() - datetime.timedelta(seconds=seconds_back)  # TODO check type Number
     from_timestamp = from_datetime.strftime('%Y-%m-%d %H:%M:%S')
@@ -56,9 +58,13 @@ class DB:
     def create_request(self, request: QueryRequest):
         create_request(request, sqlite3.connect(db_name))
 
-    def get_samples_since(self, plc_path: str, seconds_back: Number = 24 * 60 * 60):
+    def get_samples_since(self, plc_path: str, seconds_back: int = 24 * 60 * 60):
         acc = []
+        a = lambda x: np.exp(-np.power(x - (1), 2.) / (2 * np.power(200, 2.)))
         for x in range(1000):
-            acc.append(Sample(1, 2, np.sin(float(x) / 50) * 30, 4.0, 5.0, 90182573 + x, PID(1., 2., 3.)))
+            acc.append(Sample(1, 2, a(x - 500) * 200, 4.0, 5.0, 90182573 + x, PID(1., 2., 3.)))
         return acc
         # get_samples_since(plc_path, seconds_back, sqlite3.connect(db_name))
+
+if __name__ == "__main__":
+    db = DB() # for tomer

@@ -40,13 +40,15 @@ class RecommendationRequest:
         self.simulation_data = simulation_data
         self.current_sensor_value = current_sensor_value
 
-class PidDataPoints: 
+
+class PidDataPoints:
     def __init__(self,
                  time,
                  amplitude
                  ) -> None:
         self.time = time
         self.amplitude = amplitude
+
 
 class RecommendationResult:
     def __init__(self,
@@ -59,6 +61,7 @@ class RecommendationResult:
         self.old_pid_data_points = old_pid_data_points
         self.recommended_pid = recommended_pid
         self.recommended_pid_data_points = recommended_pid_data_points
+
 
 class PLC:
     def __init__(self, name):

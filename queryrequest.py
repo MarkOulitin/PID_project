@@ -1,7 +1,7 @@
+import json
 import uuid
 
 from flask import Request
-import json
 
 
 class QueryRequest:

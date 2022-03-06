@@ -3,6 +3,8 @@ from numbers import Number
 from sqlite3 import Connection
 from typing import List
 
+import numpy as np
+
 from dao.constants import db_name, plc_create_statement, requests_create_statement, samples_create_statement
 from queryrequest import QueryRequest
 from recommendation_types import PLC, PID
@@ -45,6 +47,8 @@ class DB:
         create_request(request, sqlite3.connect(db_name))
 
     def get_samples_since(self, plc_path: str, seconds_back: Number = 24 * 60 * 60):
-        return [Sample(1, 2, 3.0, 4.0, 5.0, 90182573, PID(1., 2., 3.)),
-                Sample(1, 2, 3.0, 4.0, 5.0, 90182575, PID(1., 2., 3.))]
+        acc = []
+        for x in range(1000):
+            acc.append(Sample(1, 2, np.sin(float(x) / 50) * 30, 4.0, 5.0, 90182573 + x, PID(1., 2., 3.)))
+        return acc
         # get_samples_since(plc_path, seconds_back, sqlite3.connect(db_name))

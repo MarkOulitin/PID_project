@@ -1,4 +1,4 @@
-from recommendation_types import PID
+from recommendation_types import PID, SimulationData
 
 
 class Sample:
@@ -10,3 +10,12 @@ class Sample:
         self.set_point = set_point
         self.timestamp = timestamp
         self.pid = pid
+
+    def to_simulation_data(self) -> SimulationData:
+        return SimulationData(
+            timestamp=self.timestamp,
+            pid=self.pid,
+            process_value=self.process_value,
+            pid_value=self.pid_value,
+            set_point=self.set_point
+        )

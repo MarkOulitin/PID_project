@@ -1,5 +1,6 @@
-from control.matlab import *
 import numpy as np
+from control.matlab import *
+
 
 class ModelBuilder:
     def __init__(self):
@@ -7,7 +8,7 @@ class ModelBuilder:
 
     def fit(self):
         model = tf(
-            np.array([1]), # numerator
-            np.array([1, 1]) # denumerator
+            np.array([1]),  # numerator
+            np.array([1, 1])  # denumerator
         )
         return model

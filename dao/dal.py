@@ -70,8 +70,8 @@ class DB:
         a = lambda x: np.exp(-np.power(x - (1), 2.) / (2 * np.power(200, 2.)))
         for x in range(1000):
             acc.append(Sample(1, 2, a(x - 500) * 200, 4.0, 5.0, 90182573 + x, PID(1., 2., 3.)))
-        # return acc
-        print(get_samples_since(plc_path, seconds_back, sqlite3.connect(db_name)))
+        return acc
+        # print(get_samples_since(plc_path, seconds_back, sqlite3.connect(db_name)))
 
     def insert_plcs(self, PLCs: List[PLC]):
         insert_plcs(PLCs, sqlite3.connect(db_name))

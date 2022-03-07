@@ -1,29 +1,37 @@
 import json
+import string
 import uuid
+from random import choice, randint
 
 from flask import Request
 
 
+def random_path():
+    letters = string.ascii_lowercase
+    return (''.join(choice(letters) for i in range(3))) + "/" + (''.join(choice(letters) for i in range(3))) + "/" + (
+        ''.join(choice(letters) for i in range(3)))
+
+
 class QueryRequest:
     def __init__(self,
-                 id,
-                 value_path,
-                 value_min,
-                 value_max,
-                 set_point_path,
-                 set_point_min,
-                 set_point_max,
-                 pid_path,
-                 pid_min,
-                 pid_max,
-                 pid_value_path,
-                 pid_value_min,
-                 pid_value_max,
-                 p,
-                 i,
-                 d,
-                 simulation_minutes,
-                 simulation_seconds):
+                 id=str(uuid.uuid4()),
+                 value_path=random_path(),
+                 value_min=randint(1, 3),
+                 value_max=randint(1, 3),
+                 set_point_path=random_path(),
+                 set_point_min=randint(1, 3),
+                 set_point_max=randint(1, 3),
+                 pid_path=random_path(),
+                 pid_min=randint(1, 3),
+                 pid_max=randint(1, 3),
+                 pid_value_path=random_path(),
+                 pid_value_min=randint(1, 3),
+                 pid_value_max=randint(1, 3),
+                 p=randint(1, 3),
+                 i=randint(1, 3),
+                 d=randint(1, 3),
+                 simulation_minutes=randint(1, 100),
+                 simulation_seconds=randint(1, 100)):
         self.id = id
         self.value_path = value_path
         self.value_min = value_min

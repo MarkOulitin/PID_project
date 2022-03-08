@@ -15,7 +15,7 @@ CORS(app)
 
 
 class Server:
-    def __init__(self, db=DB(), recommender=Recommendation(ZieglerNichols()), fetcher=FetcherFascade()):
+    def __init__(self, db=DB(True), recommender=Recommendation(ZieglerNichols()), fetcher=FetcherFascade()):
         self.db: DB = db
         self.recommender: Recommendation = recommender
         self.fetcher: FetcherFascade = fetcher

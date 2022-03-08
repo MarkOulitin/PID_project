@@ -1,7 +1,9 @@
 import datetime
 import sqlite3
+import time
 from sqlite3 import Connection
 from typing import List
+import os
 
 import numpy as np
 
@@ -11,7 +13,12 @@ from recommendation_types import PLC, PID
 from sample import Sample
 
 
-def initialize():
+def initialize(debug=False):
+    if debug:
+        try:
+            os.remove(db_name)
+        except:
+            pass
     conn = sqlite3.connect(db_name)
     conn.execute(plc_create_statement)
     conn.execute(requests_create_statement)
@@ -22,7 +29,7 @@ def initialize():
 def insert_plcs(PLCs: List[PLC], conn: Connection):  # TODO insert objects
     for plc in PLCs:
         conn.cursor().execute("""
-        INSERT INTO PLC(PlcPath)
+        INSERT OR IGNORE INTO PLC(PlcPath)
         VALUES(?)
         """, (plc.name,))
     conn.commit()
@@ -45,32 +52,46 @@ def create_request(request: QueryRequest, conn: Connection):  # TODO insert requ
 
 def get_samples_since(plc_path: str,
                       seconds_back: int,
-                      conn: Connection):  # TODO get samples 'seconds_back' seconds from the past until now, ordered by timestamp. return object of type SimulationData
-    from_datetime = datetime.datetime.now() - datetime.timedelta(seconds=seconds_back)  # TODO check type Number
-    from_timestamp = from_datetime.strftime('%Y-%m-%d %H:%M:%S')
+                      conn: Connection):
+    from_datetime = datetime.datetime.now() - datetime.timedelta(seconds=seconds_back)
+    from_timestamp = int(from_datetime.timestamp())
     cursor = conn.cursor()
     cursor.execute("""
-        SELECT * FROM  Samples INNER JOIN PLC ON Samples.PlcId = PLC.PlcId
+        SELECT S.SampleId, s.PlcId, ProcessValue, PidValue, SetPoint, Timestamp, P, I, D FROM Samples AS S INNER JOIN PLC ON S.PlcId = PLC.PlcId
         WHERE PlcPath = ? AND Timestamp >= ?
         ORDER BY Timestamp
     """, (plc_path, from_timestamp))
     result = cursor.fetchall()
-    return result  # TODO maybe reverse?
+    return list(map(lambda sample: Sample(sample[0], sample[1], sample[2], sample[3], sample[4], sample[5],
+                                          PID(sample[6], sample[7], sample[8])), result))
+
+
+def insert_sample(samples: List[Sample], conn):
+    for sample in samples:
+        conn.cursor().execute("""
+        INSERT OR IGNORE INTO Samples(plcid, processvalue, pidvalue, setpoint, timestamp, p, i, d)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, (sample.plc_id, sample.process_value, sample.pid_value, sample.set_point, sample.timestamp, sample.pid.p,
+              sample.pid.i, sample.pid.d))
+    conn.commit()
+    conn.close()
 
 
 class DB:
-    def __init__(self):
-        initialize()
+    def __init__(self, debug=False):
+        initialize(debug)
+        if debug:
+            acc = []
+            a = lambda x: np.exp(-np.power(x - 1, 2.) / (2 * np.power(200, 2.)))
+            for x in range(1000):
+                acc.append(Sample(1, 1, a(x - 500) * 200, 4.0, 5.0, int(time.time()) - (1000 - x), PID(1., 2., 3.)))
+            insert_sample(acc, sqlite3.connect(db_name))
+            insert_plcs([PLC('my.opc')], sqlite3.connect(db_name))
 
     def create_request(self, request: QueryRequest):
         create_request(request, sqlite3.connect(db_name))
 
     def get_samples_since(self, plc_path: str, seconds_back: int = 24 * 60 * 60):
-        # acc = []
-        # a = lambda x: np.exp(-np.power(x - (1), 2.) / (2 * np.power(200, 2.)))
-        # for x in range(1000):
-        #     acc.append(Sample(1, 2, a(x - 500) * 200, 4.0, 5.0, 90182573 + x, PID(1., 2., 3.)))
-        # return acc
         return get_samples_since(plc_path, seconds_back, sqlite3.connect(db_name))
 
     def insert_plcs(self, PLCs: List[PLC]):
@@ -85,4 +106,4 @@ if __name__ == "__main__":
     # plc2 = PLC('Ayo2')
     # db.insert_plcs([plc, plc2])
     # db.get_samples_since('Ayoo')
-    print(db.get_samples_since('Ayoo', 22*60))
+    print(db.get_samples_since('Ayoo', 22 * 60))

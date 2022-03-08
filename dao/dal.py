@@ -50,7 +50,7 @@ def get_samples_since(plc_path: str,
     from_timestamp = from_datetime.strftime('%Y-%m-%d %H:%M:%S')
     cursor = conn.cursor()
     cursor.execute("""
-        SELECT * FROM  PLC
+        SELECT * FROM  Samples INNER JOIN PLC ON Samples.PlcId = PLC.PlcId
         WHERE PlcPath = ? AND Timestamp >= ?
         ORDER BY Timestamp
     """, (plc_path, from_timestamp))
@@ -66,15 +66,15 @@ class DB:
         create_request(request, sqlite3.connect(db_name))
 
     def get_samples_since(self, plc_path: str, seconds_back: int = 24 * 60 * 60):
-        acc = []
-        a = lambda x: np.exp(-np.power(x - (1), 2.) / (2 * np.power(200, 2.)))
-        for x in range(1000):
-            acc.append(Sample(1, 2, a(x - 500) * 200, 4.0, 5.0, 90182573 + x, PID(1., 2., 3.)))
-        return acc
-        # print(get_samples_since(plc_path, seconds_back, sqlite3.connect(db_name)))
+        # acc = []
+        # a = lambda x: np.exp(-np.power(x - (1), 2.) / (2 * np.power(200, 2.)))
+        # for x in range(1000):
+        #     acc.append(Sample(1, 2, a(x - 500) * 200, 4.0, 5.0, 90182573 + x, PID(1., 2., 3.)))
+        # return acc
+        return get_samples_since(plc_path, seconds_back, sqlite3.connect(db_name))
 
     def insert_plcs(self, PLCs: List[PLC]):
-        insert_plcs(PLCs, sqlite3.connect(db_name))
+        return insert_plcs(PLCs, sqlite3.connect(db_name))
 
 
 if __name__ == "__main__":
@@ -84,5 +84,5 @@ if __name__ == "__main__":
     # plc = PLC('Ayoo')
     # plc2 = PLC('Ayo2')
     # db.insert_plcs([plc, plc2])
-    db.get_samples_since('Ayoo')
-
+    # db.get_samples_since('Ayoo')
+    print(db.get_samples_since('Ayoo', 22*60))

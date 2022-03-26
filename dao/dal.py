@@ -97,6 +97,9 @@ class DB:
     def insert_plcs(self, PLCs: List[PLC]):
         return insert_plcs(PLCs, sqlite3.connect(db_name))
 
+    def insert_samples(self, samples: List[Sample]):
+        return insert_sample(samples)
+
 
 if __name__ == "__main__":
     db = DB()  # for tomer

@@ -9,7 +9,7 @@ class Recommendation:
         self.__algorithm: Algorithm = algorithm
 
     def recommend(self, request: RecommendationRequest):
-        model_builder = ModelBuilder()
+        model_builder = ModelBuilder(request.simulation_data)
         model = model_builder.fit()
 
         # constant function for all t >= 0

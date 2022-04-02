@@ -6,7 +6,7 @@ from dao.dal import DB
 from fetcher_fascade import FetcherFascade
 from queryrequest import QueryRequest
 from recommendation_response import recommendation_response_from_recommendation_result, RecommendationResponse
-from recommendation_system.algorithm_impl.ziegler_nochols import ZieglerNichols
+from recommendation_system.algorithm_impl.ziegler_nichols import ZieglerNichols
 from recommendation_system.recommendation import Recommendation
 from recommendation_types import RecommendationRequest, PID, RecommendationResult
 

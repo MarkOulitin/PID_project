@@ -12,10 +12,5 @@ class Sample:
         self.pid = pid
 
     def to_simulation_data(self) -> SimulationData:
-        return SimulationData(
-            timestamp=self.timestamp,
-            pid=self.pid,
-            process_value=self.process_value,
-            pid_value=self.pid_value,
-            set_point=self.set_point
-        )
+        return SimulationData(timestamp=self.timestamp, process_value=self.process_value, set_point=self.set_point,
+                              out_value=self.pid_value, pid=self.pid)

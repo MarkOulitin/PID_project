@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
+from werkzeug.datastructures import FileStorage
 
 import queryrequest
 from dao.dal import DB
@@ -20,31 +21,25 @@ class Server:
         self.recommender: Recommendation = recommender
         self.fetcher: FetcherFascade = fetcher
 
-    def query(self, query_request: QueryRequest) -> RecommendationResponse:
+    def query(self, query_request: QueryRequest, file: FileStorage) -> RecommendationResponse:
         self.db.create_request(query_request)
-        recommendation_request = self.build_recommendation_request(query_request)
+        recommendation_request = self.build_recommendation_request(query_request, file)
         result: RecommendationResult = self.recommender.recommend(recommendation_request)
         return recommendation_response_from_recommendation_result(result, recommendation_request.set_point)
 
     def query_endpoint(self):
         query_request = queryrequest.flask_request_to_request(request)
-        result = self.query(query_request)
+        file = request.files['file']
+        result = self.query(query_request, file)
         ret = jsonify(result.__dict__)
         return ret
 
-    def build_recommendation_request(self, query_request: QueryRequest):
-        p, i, d = self.fetcher.fetch_pid(query_request.pid_path)
+    def build_recommendation_request(self, query_request: QueryRequest, file: FileStorage):
         pid = PID(p, i, d)
         set_point = self.fetcher.fetch_set_point(query_request.set_point_path)
-        current_sensor_value = self.fetcher.fetch_current_signal(query_request.value_path)
         convergence_time = query_request.simulation_seconds + (query_request.simulation_minutes * 60)
-        samples = self.db.get_samples_since(query_request.value_path)
-        simulation_data = list(map(lambda sample: sample.to_simulation_data(), samples))
-        return RecommendationRequest(float(set_point),
-                                     pid,
-                                     int(convergence_time),
-                                     simulation_data,
-                                     float(current_sensor_value))
+        simulation_data = simulation_data_from_file(file)
+        return RecommendationRequest(float(set_point), pid, int(convergence_time), simulation_data)
 
 
 server = Server()

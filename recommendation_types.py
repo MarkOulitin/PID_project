@@ -1,5 +1,13 @@
+from io import StringIO
 from numbers import Number
-from typing import List
+from typing import List, Dict, Any
+
+import numpy
+import pandas
+from pandas import DataFrame
+from datetime import datetime
+
+from werkzeug.datastructures import FileStorage
 
 
 class PID:
@@ -13,28 +21,51 @@ class PID:
 
 
 class SimulationData:  # each represents an entry in samples db
-    def __init__(self,
-                 timestamp: Number,
-                 pid: PID,
-                 process_value: Number,
-                 pid_value: Number,
-                 set_point: Number):
+    def __init__(self, timestamp: Number, process_value: Number, set_point: Number, out_value: Number, pid: PID = None):
         self.timestamp = timestamp
         self.pid = pid
         self.process_value = process_value
-        self.pid_value = pid_value
+        self.pid_value = out_value
         self.set_point = set_point
+
+
+def normalize_down(simulations_data: List[SimulationData]) -> List[SimulationData]:
+    ret: List[SimulationData] = []
+    pv, st, out = float("nan"), float("nan"), float("nan")
+    for simulations_data in simulations_data:
+        if simulations_data.process_value == 0:
+            pass
+        pv, st, out = \
+            pv if simulations_data.process_value != simulations_data.process_value or simulations_data.process_value is None else simulations_data.process_value, \
+            st if simulations_data.set_point != simulations_data.set_point or simulations_data.set_point is None else simulations_data.set_point, \
+            out if simulations_data.pid_value != simulations_data.pid_value or simulations_data.pid_value is None else simulations_data.pid_value
+        ret.append(SimulationData(simulations_data.timestamp, pv, st, out))
+    return ret
+
+
+def simulation_data_from_file(file: FileStorage) -> List[SimulationData]:
+    f = pandas.read_csv(file.stream, skiprows=1, encoding="utf-8")
+    ret: List[SimulationData] = []
+    for row_tuple in f.iterrows():
+        row = row_tuple[1]
+        timestamp = int(round(float(datetime.strptime("{} {} {}000".format(row.get(1), row.get(2), row.get(3)),
+                                                      "%d/%m/%Y %H:%M:%S %f").timestamp() * 1000)))
+        set_point = float(row.get(4))
+        process_value = float(row.get(5))
+        out_value = float(row.get(6))
+        ret.append(SimulationData(timestamp, process_value, set_point, out_value))
+    return normalize_down(ret)
 
 
 class RecommendationRequest:
+    # todo after loading the simmulation data, fill missing values from the past value. if it doesnt exist, delete row.
+    #  it too many rows deleted, throw exception
     def __init__(self,
-                 set_point: Number,  # needed for simulation - for tom - fetch from lazy sampler
-                 pid: PID,  # needed for model fitting and simulation - tom for fetch from lazy sampler
-                 convergence_time: Number,  # needed for simulation - for tom - seconds + minutes from request
-                 simulation_data: List[SimulationData],  # needed for model fitting - for tom - from db
-                 current_sensor_value: Number
-                 ):
-        self.set_point = set_point
+                 set_point_goal: Number,
+                 pid: PID,
+                 convergence_time: Number,
+                 simulation_data: List[SimulationData]):
+        self.set_point = set_point_goal
         self.pid = pid
         self.convergence_time = convergence_time
         self.simulation_data = simulation_data
@@ -66,3 +97,9 @@ class RecommendationResult:
 class PLC:
     def __init__(self, name):
         self.name = name
+
+
+if __name__ == "__main__":
+    with open('/Users/tomsandalon/Downloads/TEST2.csv', 'rb') as fp:
+        a = simulation_data_from_file(FileStorage(fp))
+        print(a)

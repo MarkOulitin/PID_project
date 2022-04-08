@@ -62,7 +62,7 @@ def recommendation_request(set_point: Number,
                            simulation_data: List[Sample],
                            current_sensor_value: Number):
     return RecommendationRequest(set_point, pid, convergence_time,
-                                 list(map(lambda s: s.to_simulation_data(), simulation_data)), current_sensor_value)
+                                 list(map(lambda s: s.to_simulation_data(), simulation_data)))
 
 
 def random_recommendation_result():

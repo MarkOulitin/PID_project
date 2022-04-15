@@ -13,9 +13,11 @@ class ModelBuilder:
     def __init__(self, simulation_data: List[SimulationData]):
         self.__data_points = simulation_data
 
-    def get_IO_of_plant():
-        # TODO implement
-        return [], []
+    def get_IO_of_plant(self):
+        # U input, Y output
+        u = list(map(lambda sim_data: sim_data.pid_value, self.simulation_data))
+        y = list(map(lambda sim_data: sim_data.process_value, self.simulation_data))
+        return y, u
 
     def fit(self):
         Y, U = self.get_IO_of_plant()

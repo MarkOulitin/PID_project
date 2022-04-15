@@ -30,17 +30,24 @@ class SimulationData:  # each represents an entry in samples db
 
 
 def normalize_down(simulations_data: List[SimulationData]) -> List[SimulationData]:
+    def check_process_value(simulation_data: SimulationData) -> bool:
+        return simulation_data.process_value != simulation_data.process_value or simulation_data.process_value is None
+
+    def check_set_point(simulation_data: SimulationData) -> bool:
+        return simulation_data.set_point != simulation_data.set_point or simulation_data.set_point is None
+
+    def check_pid_value(simulation_data: SimulationData) -> bool:
+        return simulation_data.pid_value != simulation_data.pid_value or simulation_data.pid_value is None
+
     ret: List[SimulationData] = []
     pv, st, out = float("nan"), float("nan"), float("nan")
-    for simulations_data in simulations_data:
-        if simulations_data.process_value == 0:
-            pass
+    for simulations_data in simulations_data:  # todo remove bad rows
         pv, st, out = \
-            pv if simulations_data.process_value != simulations_data.process_value or simulations_data.process_value is None else simulations_data.process_value, \
-            st if simulations_data.set_point != simulations_data.set_point or simulations_data.set_point is None else simulations_data.set_point, \
-            out if simulations_data.pid_value != simulations_data.pid_value or simulations_data.pid_value is None else simulations_data.pid_value
+            pv if check_process_value(simulations_data) else simulations_data.process_value, \
+            st if check_set_point(simulations_data) else simulations_data.set_point, \
+            out if check_pid_value(simulations_data) else simulations_data.pid_value
         ret.append(SimulationData(simulations_data.timestamp, pv, st, out))
-    return ret
+    return list(filter(lambda row: not (check_process_value(row) or check_set_point(row) or check_pid_value(row)), ret))
 
 
 def simulation_data_from_file(file: FileStorage) -> List[SimulationData]:

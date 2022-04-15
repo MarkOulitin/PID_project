@@ -9,7 +9,7 @@ from queryrequest import QueryRequest
 from recommendation_response import recommendation_response_from_recommendation_result, RecommendationResponse
 from recommendation_system.algorithm_impl.ziegler_nichols import ZieglerNichols
 from recommendation_system.recommendation import Recommendation
-from recommendation_types import RecommendationRequest, PID, RecommendationResult
+from recommendation_types import RecommendationRequest, PID, RecommendationResult, simulation_data_from_file
 
 app = Flask(__name__)
 CORS(app)

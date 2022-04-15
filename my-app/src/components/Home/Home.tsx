@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
+import { stringify } from "csv-stringify/sync";
 import { useNavigate } from "react-router-dom";
 import { DataArray } from "../../MockData/Data";
 import { GridElement } from "../GridElement/GridElement";
@@ -62,44 +63,61 @@ export const Home: React.FC = () => {
 		// }, 3000);
 		console.log("log");
 
+		// axios
+		// 	.get("http://127.0.0.1:5000", {
+		// 		params: {
+		// 			queryData: {
+		// 				valPath: "blabl",
+		// 				setpointPath: "blabla",
+		// 				pidPath: "bla",
+		// 				pidValuePath: "blas",
+		// 			},
+		// 			pidValues: { ...pidValues },
+		// 			timeValue: { ...timeValue },
+		// 			file: file,
+		// 		},
+		// 	})
+		// 	.then(function (response) {
+		// 		if (response.status === statusOk) {
+		// 			setLoader(false);
+		// 			const data: ResponseData = response.data;
+		// 			navigate("/output", {
+		// 				state: {
+		// 					pidBefore: {
+		// 						pVal: data.current_p,
+		// 						iVal: data.current_i,
+		// 						dVal: data.current_d,
+		// 					},
+		// 					pidAfter: {
+		// 						pVal: data.recommended_p,
+		// 						iVal: data.recommended_i,
+		// 						dVal: data.current_d,
+		// 					},
+		// 					setPoint: data.set_point,
+		// 					graphBefore: data.graph_before,
+		// 					graphAfter: data.graph_after,
+		// 				},
+		// 			});
+		// 		} else {
+		// 			console.log("error");
+		// 		}
+		// 	});
+		let formData = new FormData();
+		formData.append("file", file);
+		formData.append("plcPath", JSON.stringify(plcPath));
+		formData.append("pidValues", JSON.stringify({ ...pidValues }));
+		formData.append("timeValue", JSON.stringify({ ...timeValue }));
 		axios
-			.get("http://127.0.0.1:5000", {
-				params: {
-					queryData: {
-						valPath: "blabl",
-						setpointPath: "blabla",
-						pidPath: "bla",
-						pidValuePath: "blas",
-					},
-					pidValues: { ...pidValues },
-					timeValue: { ...timeValue },
-					// file: file,
+			.post("http://127.0.0.1:5000", formData, {
+				headers: {
+					"Content-Type": "multipart/form-data",
 				},
 			})
-			.then(function (response) {
-				if (response.status === statusOk) {
-					setLoader(false);
-					const data: ResponseData = response.data;
-					navigate("/output", {
-						state: {
-							pidBefore: {
-								pVal: data.current_p,
-								iVal: data.current_i,
-								dVal: data.current_d,
-							},
-							pidAfter: {
-								pVal: data.recommended_p,
-								iVal: data.recommended_i,
-								dVal: data.current_d,
-							},
-							setPoint: data.set_point,
-							graphBefore: data.graph_before,
-							graphAfter: data.graph_after,
-						},
-					});
-				} else {
-					console.log("error");
-				}
+			.then((response) => {
+				// fnSuccess(response);
+			})
+			.catch((error) => {
+				// fnFail(error);
 			});
 	};
 
@@ -129,6 +147,8 @@ export const Home: React.FC = () => {
 	const errorToggle = () => setErrorFlag(false);
 	const onChange = (e: any) => {
 		if (e !== undefined) {
+			console.log("event", e);
+
 			setFile(e?.target?.files[0]);
 		}
 	};

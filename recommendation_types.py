@@ -65,18 +65,18 @@ def simulation_data_from_file(file: FileStorage) -> List[SimulationData]:
 
 
 class RecommendationRequest:
-    # todo after loading the simmulation data, fill missing values from the past value. if it doesnt exist, delete row.
-    #  it too many rows deleted, throw exception
+    #  todo it too many rows deleted, throw exception
     def __init__(self,
                  set_point_goal: Number,
                  pid: PID,
                  convergence_time: Number,
                  simulation_data: List[SimulationData]):
-        self.set_point = set_point_goal
+        last_simulation_data = simulation_data[(len(simulation_data) - 1)]
+        self.set_point = last_simulation_data.set_point  # todo replace with value from use
         self.pid = pid
         self.convergence_time = convergence_time
         self.simulation_data = simulation_data
-        self.current_sensor_value = current_sensor_value
+        self.current_sensor_value = last_simulation_data.process_value
 
 
 class PidDataPoints:

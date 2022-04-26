@@ -1,17 +1,15 @@
-import numpy as np
-from control.matlab import *
-from control import *
-import numpy as np
-from numpy.linalg import matrix_rank, inv
-from numpy import matmul, around
 from typing import List
+
+from control import *
+from numpy import matmul, around
+from numpy.linalg import inv
 
 from recommendation_types import SimulationData
 
 
 class ModelBuilder:
     def __init__(self, simulation_data: List[SimulationData]):
-        self.__data_points = simulation_data
+        self.simulation_data = simulation_data
 
     def get_IO_of_plant(self):
         # U input, Y output
@@ -28,7 +26,7 @@ class ModelBuilder:
 
         M = H(2, 2)
         MA = H(2, 2, 0, 1)
-        MC = H(1, 2)
+        # MC = H(1, 2)
         MB = H(2, 1)
         
         A = around(matmul(MA, inv(M)))

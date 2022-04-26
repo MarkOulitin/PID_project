@@ -4,7 +4,6 @@ from werkzeug.datastructures import FileStorage
 
 import queryrequest
 from dao.dal import DB
-from fetcher_fascade import FetcherFascade
 from queryrequest import QueryRequest
 from recommendation_response import recommendation_response_from_recommendation_result, RecommendationResponse
 from recommendation_system.algorithm_impl.ziegler_nichols import ZieglerNichols
@@ -16,13 +15,12 @@ CORS(app)
 
 
 class Server:
-    def __init__(self, db=DB(True), recommender=Recommendation(ZieglerNichols()), fetcher=FetcherFascade()):
+    def __init__(self, db=DB(True), recommender=Recommendation(ZieglerNichols())):
         self.db: DB = db
         self.recommender: Recommendation = recommender
-        self.fetcher: FetcherFascade = fetcher
 
     def query(self, query_request: QueryRequest, file: FileStorage) -> RecommendationResponse:
-        self.db.create_request(query_request)
+        # self.db.create_request(query_request)
         recommendation_request = self.build_recommendation_request(query_request, file)
         result: RecommendationResult = self.recommender.recommend(recommendation_request)
         return recommendation_response_from_recommendation_result(result, recommendation_request.set_point)
@@ -35,11 +33,11 @@ class Server:
         return ret
 
     def build_recommendation_request(self, query_request: QueryRequest, file: FileStorage):
-        pid = PID(p, i, d)
-        set_point = self.fetcher.fetch_set_point(query_request.set_point_path)
+        pid = PID(query_request.p, query_request.i, query_request.d)
+        set_point = 0  # todo
         convergence_time = query_request.simulation_seconds + (query_request.simulation_minutes * 60)
         simulation_data = simulation_data_from_file(file)
-        return RecommendationRequest(float(set_point), pid, int(convergence_time), simulation_data)
+        return RecommendationRequest(set_point, pid, int(convergence_time), simulation_data)
 
 
 server = Server()

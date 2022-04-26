@@ -6,7 +6,6 @@ from scipy import interpolate, optimize
 
 from recommendation_system.recommendation_algorithm import Algorithm
 from recommendation_types import PID, SimulationData
-from sample import Sample
 
 SLOPE_NEAR_ZERO = "Slope approaches zero"
 

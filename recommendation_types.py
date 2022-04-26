@@ -1,13 +1,11 @@
-from io import StringIO
-from numbers import Number
-from typing import List, Dict, Any
-
-import numpy
-import pandas
-from pandas import DataFrame
 from datetime import datetime
+from numbers import Number
+from typing import List
 
+import pandas
 from werkzeug.datastructures import FileStorage
+
+from constants import REQUEST_FILTER_THRESHOLD, NotEnoughValues
 
 
 class PID:
@@ -47,7 +45,10 @@ def normalize_down(simulations_data: List[SimulationData]) -> List[SimulationDat
             st if check_set_point(simulations_data) else simulations_data.set_point, \
             out if check_pid_value(simulations_data) else simulations_data.pid_value
         ret.append(SimulationData(simulations_data.timestamp, pv, st, out))
-    return list(filter(lambda row: not (check_process_value(row) or check_set_point(row) or check_pid_value(row)), ret))
+    result = list(filter(lambda row: not (check_process_value(row) or check_set_point(row) or check_pid_value(row)), ret))
+    if float(len(result)) / float(len(ret)) < REQUEST_FILTER_THRESHOLD:
+        raise NotEnoughValues(MISSING_TOO_MANY_FIELDS)
+    return result
 
 
 def simulation_data_from_file(file: FileStorage) -> List[SimulationData]:
@@ -65,14 +66,13 @@ def simulation_data_from_file(file: FileStorage) -> List[SimulationData]:
 
 
 class RecommendationRequest:
-    #  todo it too many rows deleted, throw exception
     def __init__(self,
-                 set_point_goal: Number,
+                 set_point_goal,
                  pid: PID,
                  convergence_time: Number,
                  simulation_data: List[SimulationData]):
         last_simulation_data = simulation_data[(len(simulation_data) - 1)]
-        self.set_point = last_simulation_data.set_point  # todo replace with value from use
+        self.set_point = last_simulation_data.set_point if set_point_goal == "" else set_point_goal
         self.pid = pid
         self.convergence_time = convergence_time
         self.simulation_data = simulation_data

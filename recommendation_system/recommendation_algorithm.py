@@ -1,7 +1,7 @@
 from numbers import Number
 from typing import List
 
-from recommendation_types import SimulationData
+from recommendation_system.types.recommendation_types import SimulationData
 
 
 class Algorithm:

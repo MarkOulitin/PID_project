@@ -4,7 +4,7 @@ from control import *
 from numpy import matmul, around
 from numpy.linalg import inv
 
-from recommendation_types import SimulationData
+from recommendation_system.types.recommendation_types import SimulationData
 
 
 class ModelBuilder:

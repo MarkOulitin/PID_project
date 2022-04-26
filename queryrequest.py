@@ -1,8 +1,7 @@
 import json
 import string
 import uuid
-from random import choice, randint
-from numbers import Number
+from random import choice
 
 from flask import Request
 

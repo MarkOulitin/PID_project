@@ -1,15 +1,11 @@
-import datetime
 import sqlite3
-import time
 from sqlite3 import Connection
 from typing import List
 import os
 
-import numpy as np
-
 from dao.constants import db_name, plc_create_statement, requests_create_statement, samples_create_statement
 from queryrequest import QueryRequest
-from recommendation_types import PLC, PID
+from recommendation_system.types.recommendation_types import PLC
 
 
 def initialize(debug=False):

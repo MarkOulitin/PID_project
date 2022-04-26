@@ -2,7 +2,7 @@ from numbers import Number
 from typing import List
 
 from recommendation_system.recommendation_algorithm import Algorithm
-from recommendation_types import PID
+from recommendation_system.types.recommendation_types import PID, SimulationData
 
 
 class MockAlgorithm(Algorithm):

@@ -21,6 +21,7 @@ class QueryRequest:
                  d,
                  simulation_minutes,
                  simulation_seconds,
+                 set_point,
                  id=str(uuid.uuid4())):
         self.id = id
         self.plc_path = plc_path
@@ -29,6 +30,7 @@ class QueryRequest:
         self.d = d
         self.simulation_minutes = simulation_minutes
         self.simulation_seconds = simulation_seconds
+        self.set_point = set_point
 
 
 def row_to_request(row):
@@ -37,9 +39,17 @@ def row_to_request(row):
 
 def flask_request_to_request(request: Request):
     args = request.form
-    plc_path, pid_values, time_value = json.loads(args['plcPath']), \
-                                         json.loads(args['pidValues']), \
-                                         json.loads(args['timeValue'])
+    plc_path, pid_values, time_value, set_point = json.loads(args['plcPath']), \
+                                                  json.loads(args['pidValues']), \
+                                                  json.loads(args['timeValue']), \
+                                                  json.loads(args['setPoint'])
+    set_point = ""
+    try:
+        set_point = float(set_point)
+
+    except:
+        set_point = ""
+
     return QueryRequest(
         id=str(uuid.uuid4()),
         plc_path=plc_path,
@@ -47,5 +57,6 @@ def flask_request_to_request(request: Request):
         i=float(pid_values.get("iVal")),
         d=float(pid_values.get("dVal")),
         simulation_minutes=int(time_value.get("minutes")),
-        simulation_seconds=int(time_value.get("seconds"))
+        simulation_seconds=int(time_value.get("seconds")),
+        set_point=set_point
     )

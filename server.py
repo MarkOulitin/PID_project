@@ -34,9 +34,9 @@ class Server:
 
     def build_recommendation_request(self, query_request: QueryRequest, file: FileStorage):
         pid = PID(query_request.p, query_request.i, query_request.d)
-        set_point = 0  # todo
         convergence_time = query_request.simulation_seconds + (query_request.simulation_minutes * 60)
         simulation_data = simulation_data_from_file(file)
+        set_point = simulation_data[len(simulation_data) - 1].set_point if query_request.set_point == "" else query_request.set_point
         return RecommendationRequest(set_point, pid, int(convergence_time), simulation_data)
 
 

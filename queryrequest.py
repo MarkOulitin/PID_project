@@ -21,7 +21,7 @@ class QueryRequest:
                  simulation_minutes,
                  simulation_seconds,
                  set_point,
-                 id=str(uuid.uuid4())):
+                 id=None):
         self.id = id
         self.plc_path = plc_path
         self.p = p
@@ -30,6 +30,7 @@ class QueryRequest:
         self.simulation_minutes = simulation_minutes
         self.simulation_seconds = simulation_seconds
         self.set_point = set_point
+        self.id = id if id else str(uuid.uuid4())
 
 
 def row_to_request(row):

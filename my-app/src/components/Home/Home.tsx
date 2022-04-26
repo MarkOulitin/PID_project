@@ -1,22 +1,15 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { stringify } from "csv-stringify/sync";
 import { useNavigate } from "react-router-dom";
 import { DataArray } from "../../MockData/Data";
 import { GridElement } from "../GridElement/GridElement";
-import { PLC } from "../PLC/PLC";
+import { PLCData } from "../PLCData/PLCData";
 import { ManualPID } from "../PID/ManualPID";
 import { Simulation } from "../Simulation/Simulation";
 import { Error } from "../Utils/Error";
 import Loader from "../Utils/Loader";
 import { H1Header, HeaderContainer } from "../Utils/utils.styled";
-import {
-	Button,
-	GridContainer,
-	WidthContainer,
-	InputCSV,
-	Label,
-} from "./Home.styled";
+import { Button, WidthContainer, InputCSV, Label } from "./Home.styled";
 import {
 	PIDNumbers,
 	QueryData,
@@ -34,6 +27,9 @@ export const Home: React.FC = () => {
 	const navigate = useNavigate();
 	const [file, setFile] = useState<any>();
 	const [plcPath, setPLCPath] = useState<string>("Example: XXX XXX XXX XXX");
+	const [plcSetPoint, setPlcSetPoint] = useState<string>(
+		"Enter desired set point"
+	);
 	const [loader, setLoader] = useState<boolean>(false);
 	const [errorFlag, setErrorFlag] = useState<boolean>(false);
 	const [pidValues, setPidValues] = useState<PIDNumbers>({
@@ -61,7 +57,6 @@ export const Home: React.FC = () => {
 		// 		},
 		// 	});
 		// }, 3000);
-		console.log("log");
 
 		// axios
 		// 	.get("http://127.0.0.1:5000", {
@@ -107,6 +102,7 @@ export const Home: React.FC = () => {
 		formData.append("plcPath", JSON.stringify(plcPath));
 		formData.append("pidValues", JSON.stringify({ ...pidValues }));
 		formData.append("timeValue", JSON.stringify({ ...timeValue }));
+		formData.append("setPoint", JSON.stringify({ plcSetPoint }));
 		axios
 			.post("http://127.0.0.1:5000", formData, {
 				headers: {
@@ -146,11 +142,7 @@ export const Home: React.FC = () => {
 	};
 	const errorToggle = () => setErrorFlag(false);
 	const onChange = (e: any) => {
-		if (e !== undefined) {
-			console.log("event", e);
-
-			setFile(e?.target?.files[0]);
-		}
+		setFile(e?.target?.files[0]);
 	};
 
 	return (
@@ -162,10 +154,18 @@ export const Home: React.FC = () => {
 			<HeaderContainer>
 				<H1Header>OPC Query</H1Header>
 			</HeaderContainer>
-			<PLC
+			<PLCData
 				data={{
+					plcTitle: "PLC Path",
 					plcPath: plcPath,
 					changePLC: setPLCPath,
+				}}
+			/>
+			<PLCData
+				data={{
+					plcTitle: "PLC Set Point",
+					plcPath: plcSetPoint,
+					changePLC: setPlcSetPoint,
 				}}
 			/>
 			<ManualPID

@@ -30,7 +30,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "devTest": "npx playwright test",
+    "devTestDebug": "npx playwright test --debug"
   },
   "eslintConfig": {
     "extends": [
@@ -51,6 +53,7 @@
     ]
   },
   "devDependencies": {
+    "@playwright/test": "^1.21.1",
     "@types/styled-components": "^5.1.24"
   }
 }

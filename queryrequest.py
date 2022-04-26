@@ -14,13 +14,13 @@ def random_path():
 
 class QueryRequest:
     def __init__(self,
-                 plc_path,
-                 p,
-                 i,
-                 d,
-                 simulation_minutes,
-                 simulation_seconds,
-                 set_point,
+                 plc_path: str,
+                 p: float,
+                 i: float,
+                 d: float,
+                 simulation_minutes: int,
+                 simulation_seconds: int,
+                 set_point: str,
                  id=None):
         self.id = id
         self.plc_path = plc_path

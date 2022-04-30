@@ -1,7 +1,7 @@
 from recommendation_system.model_builder import ModelBuilder
 from recommendation_system.recommendation_algorithm import Algorithm
 from recommendation_system.simulator import Simulator
-from recommendation_types import PidDataPoints, RecommendationRequest, RecommendationResult
+from recommendation_system.types.recommendation_types import PidDataPoints, RecommendationRequest, RecommendationResult
 
 
 class Recommendation:

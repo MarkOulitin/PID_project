@@ -1,13 +1,11 @@
-from io import StringIO
-from numbers import Number
-from typing import List, Dict, Any
-
-import numpy
-import pandas
-from pandas import DataFrame
 from datetime import datetime
+from numbers import Number
+from typing import List
 
+import pandas
 from werkzeug.datastructures import FileStorage
+
+from constants import REQUEST_FILTER_THRESHOLD, NotEnoughValues
 
 
 class PID:
@@ -19,6 +17,9 @@ class PID:
         self.i = i
         self.d = d
 
+    def __eq__(self, other):
+        return self.p == other.p and self.i == other.i and self.d == other.d
+
 
 class SimulationData:  # each represents an entry in samples db
     def __init__(self, timestamp: Number, process_value: Number, set_point: Number, out_value: Number, pid: PID = None):
@@ -27,6 +28,10 @@ class SimulationData:  # each represents an entry in samples db
         self.process_value = process_value
         self.pid_value = out_value
         self.set_point = set_point
+
+    def __eq__(self, other):
+        return self.timestamp == other.timestamp and self.process_value == other.process_value and \
+               self.set_point == other.set_point and self.pid_value == other.pid_value and self.pid == other.pid
 
 
 def normalize_down(simulations_data: List[SimulationData]) -> List[SimulationData]:
@@ -47,7 +52,10 @@ def normalize_down(simulations_data: List[SimulationData]) -> List[SimulationDat
             st if check_set_point(simulations_data) else simulations_data.set_point, \
             out if check_pid_value(simulations_data) else simulations_data.pid_value
         ret.append(SimulationData(simulations_data.timestamp, pv, st, out))
-    return list(filter(lambda row: not (check_process_value(row) or check_set_point(row) or check_pid_value(row)), ret))
+    result = list(filter(lambda row: not (check_process_value(row) or check_set_point(row) or check_pid_value(row)), ret))
+    if float(len(result)) / float(len(ret)) < REQUEST_FILTER_THRESHOLD:
+        raise NotEnoughValues(MISSING_TOO_MANY_FIELDS)
+    return result
 
 
 def simulation_data_from_file(file: FileStorage) -> List[SimulationData]:
@@ -65,18 +73,22 @@ def simulation_data_from_file(file: FileStorage) -> List[SimulationData]:
 
 
 class RecommendationRequest:
-    # todo after loading the simmulation data, fill missing values from the past value. if it doesnt exist, delete row.
-    #  it too many rows deleted, throw exception
     def __init__(self,
-                 set_point_goal: Number,
+                 set_point_goal,
                  pid: PID,
                  convergence_time: Number,
                  simulation_data: List[SimulationData]):
-        self.set_point = set_point_goal
+        last_simulation_data = simulation_data[(len(simulation_data) - 1)]
+        self.set_point = last_simulation_data.set_point if set_point_goal == "" else set_point_goal
         self.pid = pid
         self.convergence_time = convergence_time
         self.simulation_data = simulation_data
-        self.current_sensor_value = current_sensor_value
+        self.current_sensor_value = last_simulation_data.process_value
+
+    def __eq__(self, other):
+        return self.pid == other.pid and self.set_point == other.set_point and \
+               self.convergence_time == other.convergence_time and self.simulation_data == other.simulation_data and \
+               self.current_sensor_value == other.current_sensor_value
 
 
 class PidDataPoints:

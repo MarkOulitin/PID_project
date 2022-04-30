@@ -1,7 +1,7 @@
 export interface SimulationData {
   data: {
-    minutes: number;
-    seconds: number;
-    changeTime: (value: number, index: number) => void;
+    minutes: string;
+    seconds: string;
+    changeTime: (value: string, index: number) => void;
   };
 }

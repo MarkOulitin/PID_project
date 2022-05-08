@@ -42,3 +42,8 @@ export const Label = styled.label`
 	width: 200px;
 	background-color: #1976d2;
 `;
+
+export const Span = styled.span`
+	white-space: pre-wrap;
+	font-weight: bold;
+`;

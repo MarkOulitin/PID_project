@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { DataArray } from "../../MockData/Data";
+import { formRules } from "../../MockData/Data";
 import { GridElement } from "../GridElement/GridElement";
 import { PLCData } from "../PLCData/PLCData";
 import { ManualPID } from "../PID/ManualPID";
@@ -9,7 +9,7 @@ import { Simulation } from "../Simulation/Simulation";
 import { Error } from "../Utils/Error";
 import Loader from "../Utils/Loader";
 import { H1Header, HeaderContainer } from "../Utils/utils.styled";
-import { Button, WidthContainer, InputCSV, Label } from "./Home.styled";
+import { Button, WidthContainer, InputCSV, Label, Span } from "./Home.styled";
 import {
 	PIDNumbers,
 	QueryData,
@@ -195,7 +195,7 @@ export const Home: React.FC = () => {
 				<Stack width="80%" marginTop={"20px"}>
 					<Alert severity="info">
 						<AlertTitle>Info</AlertTitle>
-						<strong>Fill the provided fields and upload a CSV file</strong>
+						<Span>{formRules}</Span>
 					</Alert>
 				</Stack>
 				<Stack

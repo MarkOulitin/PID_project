@@ -134,3 +134,6 @@ export const data2 = {
 // 		graphBefore: [],
 // 		graphAfter: [],
 // 	},
+
+export const formRules =
+	"Fill the provided fields and upload a CSV file.\nPLC Path should be informative.\nPLC Set Point is optional.\nPID Values should be valid.\nSimulation Data values should be valid.";

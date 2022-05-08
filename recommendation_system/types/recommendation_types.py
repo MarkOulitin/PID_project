@@ -53,8 +53,8 @@ def normalize_down(simulations_data: List[SimulationData]) -> List[SimulationDat
             out if check_pid_value(simulations_data) else simulations_data.pid_value
         ret.append(SimulationData(simulations_data.timestamp, pv, st, out))
     result = list(filter(lambda row: not (check_process_value(row) or check_set_point(row) or check_pid_value(row)), ret))
-    if float(len(result)) / float(len(ret)) < REQUEST_FILTER_THRESHOLD:
-        raise NotEnoughValues(MISSING_TOO_MANY_FIELDS)
+    # if float(len(result)) / float(len(ret)) < REQUEST_FILTER_THRESHOLD:
+    #     raise NotEnoughValues(MISSING_TOO_MANY_FIELDS)
     return result
 
 
@@ -63,8 +63,13 @@ def simulation_data_from_file(file: FileStorage) -> List[SimulationData]:
     ret: List[SimulationData] = []
     for row_tuple in f.iterrows():
         row = row_tuple[1]
-        timestamp = int(round(float(datetime.strptime("{} {} {}000".format(row.get(1), row.get(2), row.get(3)),
-                                                      "%d/%m/%Y %H:%M:%S %f").timestamp() * 1000)))
+        millis = str(int(row.get(3)) * 1000) if int(row.get(3)) != 0 else "000000"
+        try:
+            timestamp = int(round(float(datetime.strptime("{} {} {}".format(row.get(1), row.get(2), millis),
+                                                          "%d/%m/%Y %H:%M:%S %f").timestamp() * 1000)))
+        except:
+            timestamp = int(round(float(datetime.strptime("{} {} {}".format(row.get(1), row.get(2), millis),
+                                                          "%Y-%m-%d %H:%M:%S %f").timestamp() * 1000)))
         set_point = float(row.get(4))
         process_value = float(row.get(5))
         out_value = float(row.get(6))
@@ -119,6 +124,6 @@ class PLC:
 
 
 if __name__ == "__main__":
-    with open('/Users/tomsandalon/Downloads/TEST2.csv', 'rb') as fp:
+    with open('/Users/tomsandalon/Downloads/TEST2 copy 2.csv', 'rb') as fp:
         a = simulation_data_from_file(FileStorage(fp))
         print(a)

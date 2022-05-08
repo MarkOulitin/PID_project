@@ -18,14 +18,14 @@ from tests.resources.mocks.recommender_mock import RecommenderMock
 
 class TestServer(unittest.TestCase):
     def test_query(self):
-        with open('./resources/csvs/test1.csv', 'rb') as fp:
+        with open('resources/data/test1.csv', 'rb') as fp:
             file = FileStorage(fp)
             simulation_data = simulation_data_from_file(file)
             db = DbMock()
             recommender = RecommenderMock()
 
             server = Server(db=db, recommender=recommender)
-            seconds_back = 24 * 60 * 60
+            seconds_back = 24 * 60 * 60 * randint(0, 100)
             plc_path = random_string()
             set_point = float(randint(0, 100))
             pid = PID(float(randint(0, 100)), float(randint(0, 100)), float(randint(0, 100)))
@@ -33,10 +33,9 @@ class TestServer(unittest.TestCase):
             request = generate_query_request(plc_path, pid, seconds_back, set_point)
             rec_request = recommendation_request(set_point, pid, seconds_back, simulation_data)
 
-            # db.set_expected_values(request.value_path, seconds_back, samples)
             recommender.set_expected_values(rec_request, response)
 
-        with open('./resources/csvs/test1.csv', 'rb') as fp:
+        with open('resources/data/test1.csv', 'rb') as fp:
             file = FileStorage(fp)
             query = server.query(request, file)
             correct = RecommendationResponse(

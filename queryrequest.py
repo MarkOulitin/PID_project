@@ -39,13 +39,11 @@ def row_to_request(row):
 
 def flask_request_to_request(request: Request):
     args = request.form
-    plc_path, pid_values, time_value, set_point = json.loads(args['plcPath']), \
+    plc_path, pid_values, time_value = json.loads(args['plcPath']), \
                                                   json.loads(args['pidValues']), \
-                                                  json.loads(args['timeValue']), \
-                                                  json.loads(args['setPoint'])
-    set_point = ""
+                                                  json.loads(args['timeValue'])
     try:
-        set_point = float(set_point)
+        set_point = float(json.loads(args['setPoint']))
 
     except:
         set_point = ""

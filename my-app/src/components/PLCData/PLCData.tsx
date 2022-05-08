@@ -1,15 +1,17 @@
 import React from "react";
-import { PLCProps } from "./PLC.types";
+import { PLCProps } from "./PLCData.types";
 import { GridContainer, RowContainer } from "../PID/PID.styled";
 import { H2 } from "../Utils/utils.styled";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 
-export const PLC: React.FC<PLCProps> = ({ data: { plcPath, changePLC } }) => {
+export const PLCData: React.FC<PLCProps> = ({
+	data: { plcTitle, plcPath, changePLC },
+}) => {
 	return (
 		<GridContainer>
 			<RowContainer>
-				<H2>PLC Path</H2>
+				<H2>{plcTitle}</H2>
 			</RowContainer>
 			<Box
 				border={"1px solid black"}
@@ -21,7 +23,7 @@ export const PLC: React.FC<PLCProps> = ({ data: { plcPath, changePLC } }) => {
 				autoComplete="off"
 			>
 				<TextField
-					label={"PLC Path"}
+					label={plcTitle}
 					value={plcPath}
 					onChange={(e) => changePLC(e.target.value)}
 				/>

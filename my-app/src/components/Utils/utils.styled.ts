@@ -62,6 +62,7 @@ export const MiddleScreenContainer = styled.div`
 	border-radius: 20% 20% 20% 20%;
 	border: 1px solid black;
 	background-color: #f0ffff;
+	 z-index: 10;
 `;
 
 export const ErrorContainer = styled.div`

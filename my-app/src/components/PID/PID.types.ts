@@ -1,8 +1,8 @@
 export interface PID {
 	data: {
-		pVal: number;
-		iVal: number;
-		dVal: number;
-		changePID: (value: number, index: number) => void;
+		pVal: string;
+		iVal: string;
+		dVal: string;
+		changePID: (value: string, index: number) => void;
 	};
 }

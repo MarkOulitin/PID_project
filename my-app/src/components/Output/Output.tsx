@@ -36,7 +36,6 @@ ChartJS.register(
 
 export const Output: React.FC = () => {
 	const location = useLocation();
-
 	const { pidBefore, pidAfter, setPoint, graphBefore, graphAfter }: any =
 		location.state;
 

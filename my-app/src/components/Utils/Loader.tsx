@@ -1,5 +1,6 @@
 import React from "react";
 import loaderGif from "./loader.gif";
+
 import { MiddleScreenContainer } from "./utils.styled";
 
 export default function Loader() {

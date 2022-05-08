@@ -5,14 +5,14 @@ export interface QueryData {
 }
 
 export interface PIDNumbers {
-	pVal: number;
-	iVal: number;
-	dVal: number;
+	pVal: string;
+	iVal: string;
+	dVal: string;
 }
 
 export interface SimulationData {
-	minutes: number;
-	seconds: number;
+	minutes: string;
+	seconds: string;
 }
 
 export interface NavigationProps {

@@ -19,7 +19,18 @@ class ModelBuilder:
 
     def fit(self):
         Y, U = self.get_IO_of_plant()
-        h = markov(Y, U)[0]
+        for i in range(10, 500, 10):
+            h = None
+            for j in range(len(Y) - 10 - 1, 0, -1):
+                try:
+                    y = Y[j:j + i]
+                    u = U[j:j + i]
+                    h = markov(y, u)[0]
+                    break
+                except:
+                    pass
+            if h:
+                break
 
         def H(nr, nc, dr=0, dc=0):
             return np.array([[round(h[dc + dr * dc + j + 1]) for j in range(i, i + nc)] for i in range(nr)])

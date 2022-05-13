@@ -1,15 +1,20 @@
+import os
+
 import werkzeug.exceptions
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 from werkzeug.datastructures import FileStorage
+from werkzeug.utils import secure_filename
 
 import queryrequest
 from dao.dal import DB
 from queryrequest import QueryRequest
-from recommendation_system.types.recommendation_response import recommendation_response_from_recommendation_result, RecommendationResponse
+from recommendation_system.types.recommendation_response import recommendation_response_from_recommendation_result, \
+    RecommendationResponse
 from recommendation_system.algorithm_impl.ziegler_nichols import ZieglerNichols
 from recommendation_system.recommendation import Recommendation
-from recommendation_system.types.recommendation_types import RecommendationRequest, PID, RecommendationResult, simulation_data_from_file
+from recommendation_system.types.recommendation_types import RecommendationRequest, PID, RecommendationResult, \
+    simulation_data_from_file
 
 app = Flask(__name__)
 CORS(app)
@@ -19,6 +24,7 @@ class Server:
     def __init__(self, db=DB(True), recommender=Recommendation(ZieglerNichols())):
         self.db: DB = db
         self.recommender: Recommendation = recommender
+        self.uploads_dir = os.path.join(app.instance_path, 'uploads')
 
     def query_endpoint(self):
         query_request = queryrequest.flask_request_to_request(request)
@@ -40,6 +46,25 @@ class Server:
         simulation_data = simulation_data_from_file(file)
         return RecommendationRequest(set_point, pid, int(convergence_time), simulation_data)
 
+    def upload_algorithm(self):
+        try:
+            file = request.files['file']
+            if not file.filename.endswith('.py'):
+                raise Exception
+            os.makedirs(self.uploads_dir, exist_ok=True)
+            file.save(os.path.join(self.uploads_dir, secure_filename(file.filename)))
+            return jsonify({'result': True})
+        except:
+            return jsonify({'result': True})
+
+    def get_algorithms(self):
+        ret = []
+        os.makedirs(self.uploads_dir, exist_ok=True)
+        for file in os.listdir(self.uploads_dir):
+            if file.endswith(".py"):
+                ret.append(file)
+        return jsonify({'result': ret})
+
 
 server = Server()
 
@@ -53,6 +78,13 @@ def handle_exception(e):
 @cross_origin()
 def act():
     return server.query_endpoint()
+
+
+@app.route(rule='/algorithm', methods=('GET', 'POST'))
+@cross_origin()
+def algo():
+    return server.upload_algorithm() if request.method == 'POST' \
+        else server.get_algorithms() if request.method == 'GET' else None
 
 
 if __name__ == "__main__":

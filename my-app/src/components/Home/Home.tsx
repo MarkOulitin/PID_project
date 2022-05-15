@@ -4,17 +4,19 @@ import { useNavigate } from "react-router-dom";
 import { formRules } from "../../MockData/Data";
 import { GridElement } from "../GridElement/GridElement";
 import { PLCData } from "../PLCData/PLCData";
+import { Algorithms } from "../Algorithms/Algorithms";
 import { ManualPID } from "../PID/ManualPID";
 import { Simulation } from "../Simulation/Simulation";
 import { Error } from "../Utils/Error";
 import Loader from "../Utils/Loader";
 import { H1Header, HeaderContainer } from "../Utils/utils.styled";
-import { Button, WidthContainer, InputCSV, Label, Span } from "./Home.styled";
+import { Button, WidthContainer, InputFile, Label, Span } from "./Home.styled";
 import {
 	PIDNumbers,
 	QueryData,
 	SimulationData,
 	ResponseData,
+	Response,
 } from "./Home.types";
 import Send from "@mui/icons-material/Send";
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
@@ -49,12 +51,20 @@ export const Home: React.FC = () => {
 	const statusOk = 200;
 	const statusError = 500;
 	const navigate = useNavigate();
+	const [algorithmNames, setAlgorithmNames] = useState<string[]>([
+		"No algorithms available",
+		"No algorithms available",
+		"No algorithms available",
+		"No algorithms available",
+	]);
 	const [file, setFile] = useState<any>();
+	const [algoFile, setAlgoFile] = useState<any>();
 	const [plcPath, setPLCPath] = useState<string>();
 	const [buttonToggle, setButtonToggle] = useState<boolean>(false);
 	const [plcSetPoint, setPlcSetPoint] = useState<string>();
 	const [loader, setLoader] = useState<boolean>(false);
 	const [errorFlag, setErrorFlag] = useState<boolean>(false);
+	const [algoIndex, setAlgoIndex] = useState<number>(0);
 	const [pidValues, setPidValues] = useState<PIDNumbers>({
 		pVal: "",
 		iVal: "",
@@ -64,6 +74,23 @@ export const Home: React.FC = () => {
 		minutes: "",
 		seconds: "",
 	});
+
+	useEffect(() => {
+		axios
+			.get("http://127.0.0.1:5000/algorithm", {
+				headers: {
+					"Content-Type": "multipart/form-data",
+				},
+			})
+			.then((response: Response) => {
+				if ((response.status = statusOk)) {
+					response.data.result ?? setAlgorithmNames(response.data.result);
+				}
+			})
+			.catch((error) => {
+				setErrorFlag(true);
+			});
+	}, []);
 
 	useEffect(() => {
 		const validation = validationSchema.isValidSync(
@@ -78,19 +105,21 @@ export const Home: React.FC = () => {
 			},
 			{ strict: true }
 		);
-		setButtonToggle(validation && file !== undefined);
-	}, [file, plcPath, plcSetPoint, pidValues, timeValue]);
+		setButtonToggle(
+			validation && (file !== undefined || algoFile !== undefined)
+		);
+	}, [file, algoFile, plcPath, plcSetPoint, pidValues, timeValue]);
 
 	const test = () => {
 		setTimeout(() => {
 			setLoader(false);
 			navigate("/output", {
 				state: {
-					pidBefore: { pVal: 0, iVal: 0, dVal: 0 },
-					pidAfter: { pVal: 0, iVal: 0, dVal: 0 },
-					setPoint: 0,
-					graphBefore: [],
-					graphAfter: [],
+					pidBefore: { pVal: 1, iVal: 1.5, dVal: 1.2 },
+					pidAfter: { pVal: 1.5, iVal: 1.7, dVal: 1.3 },
+					setPoint: 100,
+					graphBefore: Array.from(Array(60).keys()).map((x) => x * 10),
+					graphAfter: Array.from(Array(60).keys()).map((x) => x * 10),
 				},
 			});
 		}, 3000);
@@ -99,6 +128,8 @@ export const Home: React.FC = () => {
 	};
 	const sendQuery = () => {
 		setLoader(true);
+		// test();
+		return;
 		let formData = new FormData();
 		formData.append("file", file);
 		formData.append("plcPath", JSON.stringify(plcPath));
@@ -147,6 +178,9 @@ export const Home: React.FC = () => {
 	const onChange = (e: any) => {
 		setFile(e?.target?.files[0]);
 	};
+	const onChangeAlgo = (e: any) => {
+		setAlgoFile(e?.target?.files[0]);
+	};
 
 	return (
 		<WidthContainer>
@@ -157,6 +191,7 @@ export const Home: React.FC = () => {
 			<HeaderContainer>
 				<H1Header>OPC Query</H1Header>
 			</HeaderContainer>
+			<Algorithms algorithmIndex={setAlgoIndex} names={algorithmNames} />
 			<PLCData
 				data={{
 					plcTitle: "PLC Path",
@@ -215,14 +250,24 @@ export const Home: React.FC = () => {
 					</Button>
 					<Stack direction="row" justifyContent="center" alignItems="center">
 						<Label>
-							<InputCSV
+							<InputFile
 								type={"file"}
 								id={"csvFileInput"}
 								accept={".csv"}
 								onChange={onChange}
 							/>
 							<DriveFolderUploadIcon />
-							{" Upload File"}
+							{" Upload CSV"}
+						</Label>
+						<Label>
+							<InputFile
+								type={"file"}
+								id={"pyFileInput"}
+								accept={".py"}
+								onChange={onChangeAlgo}
+							/>
+							<DriveFolderUploadIcon />
+							{" Upload Algorithm"}
 						</Label>
 					</Stack>
 				</Stack>

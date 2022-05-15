@@ -36,3 +36,8 @@ export interface ResponseData {
 	recommended_d: number;
 	set_point: number;
 }
+
+export interface Response {
+	status: number;
+	data: { result: string[] };
+}

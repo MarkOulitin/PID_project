@@ -21,7 +21,7 @@ export const Button = styled(ButtonUI)`
 	}
 `;
 
-export const InputCSV = styled.input`
+export const InputFile = styled.input`
 	display: none;
 `;
 
@@ -30,6 +30,7 @@ export const Label = styled.label`
 	line-height: 45px;
 	font-size: 30px;
 	margin-top: 20px;
+	margin-right:10px;
 	border: 1px solid #ccc;
 	display: inline-block;
 	cursor: pointer;
@@ -39,7 +40,7 @@ export const Label = styled.label`
 	color: white;
 	border-radius: 10px;
 	height: 50px;
-	width: 200px;
+	width: 300px;
 	background-color: #1976d2;
 `;
 

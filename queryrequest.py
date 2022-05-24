@@ -5,6 +5,8 @@ from random import choice
 
 from flask import Request
 
+from constants import DEFAULT_ALGORITHM
+
 
 def random_path():
     letters = string.ascii_lowercase
@@ -44,9 +46,13 @@ def flask_request_to_request(request: Request):
                                                   json.loads(args['timeValue'])
     try:
         set_point = float(json.loads(args['setPoint']))
-
     except:
         set_point = ""
+
+    try:
+        algorithm = str(json.loads(args['algorithm']))
+    except:
+        algorithm = DEFAULT_ALGORITHM
 
     return QueryRequest(
         id=str(uuid.uuid4()),
@@ -57,4 +63,4 @@ def flask_request_to_request(request: Request):
         simulation_minutes=int(time_value.get("minutes")),
         simulation_seconds=int(time_value.get("seconds")),
         set_point=set_point
-    )
+    ), algorithm

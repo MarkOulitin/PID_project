@@ -62,7 +62,7 @@ class Server:
             return jsonify({'result': True})
 
     def get_algorithms(self):
-        ret = []
+        ret = [DEFAULT_ALGORITHM]
         os.makedirs(self.uploads_dir, exist_ok=True)
         for file in os.listdir(self.uploads_dir):
             if file.endswith(".py"):

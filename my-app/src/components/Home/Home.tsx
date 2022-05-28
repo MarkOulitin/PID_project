@@ -105,9 +105,7 @@ export const Home: React.FC = () => {
 			},
 			{ strict: true }
 		);
-		setButtonToggle(
-			validation && (file !== undefined || algoFile !== undefined)
-		);
+		setButtonToggle(validation && file !== undefined);
 	}, [file, algoFile, plcPath, plcSetPoint, pidValues, timeValue]);
 
 	const test = () => {

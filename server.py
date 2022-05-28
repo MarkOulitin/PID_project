@@ -29,7 +29,10 @@ class Server:
         self.uploads_dir = os.path.join(app.instance_path, 'uploads')
 
     def query_endpoint(self):
+        algorithm_file_name = server.upload_algorithm()
         query_request, algorithm_name = queryrequest.flask_request_to_request(request)
+        if algorithm_file_name:
+            algorithm_name = algorithm_file_name
         file = request.files['file']
         result = self.query(query_request, file, algorithm_name)
         ret = jsonify(result.__dict__)
@@ -52,14 +55,14 @@ class Server:
 
     def upload_algorithm(self):
         try:
-            file = request.files['file']
+            file = request.files['algorithmFile']
             if not file.filename.endswith('.py'):
                 raise Exception
             os.makedirs(self.uploads_dir, exist_ok=True)
             file.save(os.path.join(self.uploads_dir, secure_filename(file.filename)))
-            return jsonify({'result': True})
+            return file.filename
         except:
-            return jsonify({'result': True})
+            raise None
 
     def get_algorithms(self):
         ret = [DEFAULT_ALGORITHM]
@@ -84,11 +87,10 @@ def act():
     return server.query_endpoint()
 
 
-@app.route(rule='/algorithm', methods=('GET', 'POST'))
+@app.route(rule='/algorithm', methods=('GET'))
 @cross_origin()
 def algo():
-    return server.upload_algorithm() if request.method == 'POST' \
-        else server.get_algorithms() if request.method == 'GET' else None
+    server.get_algorithms() if request.method == 'GET' else None
 
 
 if __name__ == "__main__":

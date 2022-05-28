@@ -31,7 +31,7 @@ class CustomAlgorithm(Algorithm):
             except Exception as e:
                 raise CustomAlgorithmFailed('Invalid return value from algorithm. \nException: [' + str(
                     e) + ']\nOutput: \n[' + file.read() + ']')
-        # try:
+        try:
             os.remove(task_id)
         except:
             pass

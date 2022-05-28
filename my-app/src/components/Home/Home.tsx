@@ -85,8 +85,6 @@ export const Home: React.FC = () => {
 				}
 			})
 			.catch((error) => {
-				console.log(error);
-
 				setErrorFlag(true);
 			});
 	}, []);
@@ -120,24 +118,23 @@ export const Home: React.FC = () => {
 				},
 			});
 		}, 3000);
-		// setLoader(false);
-		// setErrorFlag(true);
 	};
+
 	const sendQuery = () => {
 		setLoader(true);
-		// test();
-		// return;
 		let formData = new FormData();
 		formData.append("file", file);
 		formData.append("plcPath", JSON.stringify(plcPath));
 		formData.append("pidValues", JSON.stringify({ ...pidValues }));
 		formData.append("timeValue", JSON.stringify({ ...timeValue }));
 		formData.append("setPoint", JSON.stringify({ plcSetPoint }));
-		// formData.append(
-		// 	"algorithm",
-		// 	JSON.stringify(algoFile.name ?? algorithmNames[algoIndex])
-		// );
-		// formData.append("algorithmFile", algoFile);
+		formData.append(
+			"algorithm",
+			JSON.stringify(algoFile?.name ?? algorithmNames[algoIndex])
+		);
+		if (algoFile) {
+			formData.append("algorithmFile", algoFile);
+		}
 
 		axios
 			.post("http://127.0.0.1:5000", formData, {
@@ -146,11 +143,28 @@ export const Home: React.FC = () => {
 				},
 			})
 			.then((response) => {
-				// fnSuccess(response);
-				console.log("response", response);
+				console.log(response.data.graph_before);
+
+				navigate("/output", {
+					state: {
+						pidBefore: {
+							pVal: response.data.current_p,
+							iVal: response.data.current_i,
+							dVal: response.data.current_d,
+						},
+						pidAfter: {
+							pVal: response.data.recommended_p,
+							iVal: response.data.recommended_i,
+							dVal: response.data.recommended_d,
+						},
+						setPoint: 100,
+						graphBefore: [...Array(100)].map((val, index) => [index, index]),
+						graphAfter: [...Array(100)].map((val, index) => [index, index]),
+					},
+				});
 			})
 			.catch((error) => {
-				console.log("error", error);
+				setErrorFlag(true);
 			});
 	};
 

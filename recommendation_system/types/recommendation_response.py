@@ -55,7 +55,7 @@ def default_recommendation_response(p, i, d, set_point, simulation_data: List[Si
     return RecommendationResponse(
         p, i, d,
         p + 1, i + 1, d + 1,
-        set_point,
+        set_point if set_point != "" else "1",
         graph_before,
         graph_after
     )

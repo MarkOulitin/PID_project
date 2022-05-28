@@ -30,7 +30,8 @@ class Server:
 
     def query_endpoint(self):
         algorithm_file_name = server.upload_algorithm()
-        query_request, algorithm_name = queryrequest.flask_request_to_request(request)
+        query_request, algorithm_name = queryrequest.flask_request_to_request(
+            request)
         if algorithm_file_name:
             algorithm_name = algorithm_file_name
         file = request.files['file']
@@ -40,19 +41,21 @@ class Server:
 
     def query(self, query_request: QueryRequest, file: FileStorage, algorithm_name: str) -> RecommendationResponse:
         self.db.create_request(query_request)
-        recommendation_request = self.build_recommendation_request(query_request, file)
+        recommendation_request = self.build_recommendation_request(
+            query_request, file)
         if query_request.plc_path == TEST:
             default_recommendation_response(query_request.p, query_request.i, query_request.d, query_request.set_point,
                                             recommendation_request.simulation_data)
         result: RecommendationResult = \
             self.recommender.recommend(recommendation_request) if algorithm_name == DEFAULT_ALGORITHM \
-                else CustomAlgorithm(algorithm_name).recommend(recommendation_request)
+            else CustomAlgorithm(algorithm_name).recommend(recommendation_request)
         return recommendation_response_from_recommendation_result(result, recommendation_request.set_point)
 
     def build_recommendation_request(self, query_request: QueryRequest, file: FileStorage):
         pid = PID(query_request.p, query_request.i, query_request.d)
         set_point = query_request.set_point
-        convergence_time = query_request.simulation_seconds + (query_request.simulation_minutes * 60)
+        convergence_time = query_request.simulation_seconds + \
+            (query_request.simulation_minutes * 60)
         simulation_data = simulation_data_from_file(file)
         return RecommendationRequest(set_point, pid, int(convergence_time), simulation_data)
 
@@ -62,7 +65,8 @@ class Server:
             if not file.filename.endswith('.py'):
                 raise Exception
             os.makedirs(self.uploads_dir, exist_ok=True)
-            file.save(os.path.join(self.uploads_dir, secure_filename(file.filename)))
+            file.save(os.path.join(self.uploads_dir,
+                      secure_filename(file.filename)))
             return file.filename
         except:
             raise None
@@ -90,10 +94,10 @@ def act():
     return server.query_endpoint()
 
 
-@app.route(rule='/algorithm', methods=('GET'))
+@app.route(rule='/algorithm', methods=('GET', 'POST'))
 @cross_origin()
 def algo():
-    server.get_algorithms() if request.method == 'GET' else None
+    return server.get_algorithms() if request.method == 'GET' else None
 
 
 if __name__ == "__main__":

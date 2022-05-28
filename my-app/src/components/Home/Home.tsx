@@ -85,6 +85,8 @@ export const Home: React.FC = () => {
 				}
 			})
 			.catch((error) => {
+				console.log(error);
+
 				setErrorFlag(true);
 			});
 	}, []);
@@ -136,7 +138,6 @@ export const Home: React.FC = () => {
 			JSON.stringify(algoFile.name ?? algorithmNames[algoIndex])
 		);
 		formData.append("algorithmFile", algoFile);
-		console.log("formData", algoFile.name, algorithmNames[algoIndex]);
 
 		axios
 			.post("http://127.0.0.1:5000", formData, {

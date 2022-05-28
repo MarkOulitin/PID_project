@@ -53,9 +53,6 @@ export const Home: React.FC = () => {
 	const navigate = useNavigate();
 	const [algorithmNames, setAlgorithmNames] = useState<string[]>([
 		"No algorithms available",
-		"No algorithms available",
-		"No algorithms available",
-		"No algorithms available",
 	]);
 	const [file, setFile] = useState<any>();
 	const [algoFile, setAlgoFile] = useState<any>();
@@ -84,7 +81,7 @@ export const Home: React.FC = () => {
 			})
 			.then((response: Response) => {
 				if ((response.status = statusOk)) {
-					response.data.result ?? setAlgorithmNames(response.data.result);
+					setAlgorithmNames([...response.data.result]);
 				}
 			})
 			.catch((error) => {
@@ -127,13 +124,20 @@ export const Home: React.FC = () => {
 	const sendQuery = () => {
 		setLoader(true);
 		// test();
-		return;
+		// return;
 		let formData = new FormData();
 		formData.append("file", file);
 		formData.append("plcPath", JSON.stringify(plcPath));
 		formData.append("pidValues", JSON.stringify({ ...pidValues }));
 		formData.append("timeValue", JSON.stringify({ ...timeValue }));
 		formData.append("setPoint", JSON.stringify({ plcSetPoint }));
+		formData.append(
+			"algorithm",
+			JSON.stringify(algoFile.name ?? algorithmNames[algoIndex])
+		);
+		formData.append("algorithmFile", algoFile);
+		console.log("formData", algoFile.name, algorithmNames[algoIndex]);
+
 		axios
 			.post("http://127.0.0.1:5000", formData, {
 				headers: {

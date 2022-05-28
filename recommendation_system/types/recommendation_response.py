@@ -54,8 +54,8 @@ def default_recommendation_response(p, i, d, set_point, simulation_data: List[Si
                             list(map(lambda entry: entry.process_value + 1, simulation_data))))
     return RecommendationResponse(
         p, i, d,
-        p + random.randint(1), i + random.randint(1), d + random.randint(1),
-        set_point,
+        p + 1, i + 1, d + 1,
+        set_point if set_point != "" else "1",
         graph_before,
         graph_after
     )

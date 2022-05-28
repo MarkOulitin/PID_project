@@ -1,6 +1,10 @@
+import random
 from numbers import Number
+from typing import List
 
-from recommendation_system.types.recommendation_types import RecommendationResult
+import numpy as np
+
+from recommendation_system.types.recommendation_types import RecommendationResult, SimulationData
 
 
 class RecommendationResponse:
@@ -38,6 +42,19 @@ def recommendation_response_from_recommendation_result(rec: RecommendationResult
         recommended_p,
         recommended_i,
         recommended_d,
+        set_point,
+        graph_before,
+        graph_after
+    )
+
+def default_recommendation_response(p, i, d, set_point, simulation_data: List[SimulationData]):
+    graph_before = list(zip(list(map(lambda entry: entry.timestamp, simulation_data)),
+                            list(map(lambda entry: entry.process_value, simulation_data))))
+    graph_after = list(zip(list(map(lambda entry: entry.timestamp, simulation_data)),
+                            list(map(lambda entry: entry.process_value + 1, simulation_data))))
+    return RecommendationResponse(
+        p, i, d,
+        p + random.randint(1), i + random.randint(1), d + random.randint(1),
         set_point,
         graph_before,
         graph_after

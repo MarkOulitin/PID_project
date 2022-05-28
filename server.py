@@ -44,7 +44,7 @@ class Server:
         recommendation_request = self.build_recommendation_request(
             query_request, file)
         if query_request.plc_path == TEST:
-            default_recommendation_response(query_request.p, query_request.i, query_request.d, query_request.set_point,
+            return default_recommendation_response(query_request.p, query_request.i, query_request.d, query_request.set_point,
                                             recommendation_request.simulation_data)
         result: RecommendationResult = \
             self.recommender.recommend(recommendation_request) if algorithm_name == DEFAULT_ALGORITHM \
@@ -69,7 +69,7 @@ class Server:
                       secure_filename(file.filename)))
             return file.filename
         except:
-            raise None
+            return None
 
     def get_algorithms(self):
         ret = [DEFAULT_ALGORITHM]

@@ -133,11 +133,11 @@ export const Home: React.FC = () => {
 		formData.append("pidValues", JSON.stringify({ ...pidValues }));
 		formData.append("timeValue", JSON.stringify({ ...timeValue }));
 		formData.append("setPoint", JSON.stringify({ plcSetPoint }));
-		formData.append(
-			"algorithm",
-			JSON.stringify(algoFile.name ?? algorithmNames[algoIndex])
-		);
-		formData.append("algorithmFile", algoFile);
+		// formData.append(
+		// 	"algorithm",
+		// 	JSON.stringify(algoFile.name ?? algorithmNames[algoIndex])
+		// );
+		// formData.append("algorithmFile", algoFile);
 
 		axios
 			.post("http://127.0.0.1:5000", formData, {

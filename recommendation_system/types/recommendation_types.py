@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 from numbers import Number
 from typing import List
@@ -10,7 +11,7 @@ from constants import REQUEST_FILTER_THRESHOLD, NotEnoughValues
 
 class PID:
     def __init__(self,
-                 p: Number,
+                 p,
                  i: Number,
                  d: Number):
         self.p = p
@@ -32,6 +33,9 @@ class SimulationData:  # each represents an entry in samples db
     def __eq__(self, other):
         return self.timestamp == other.timestamp and self.process_value == other.process_value and \
                self.set_point == other.set_point and self.pid_value == other.pid_value and self.pid == other.pid
+
+    def to_json(self):
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
 
 def normalize_down(simulations_data: List[SimulationData]) -> List[SimulationData]:

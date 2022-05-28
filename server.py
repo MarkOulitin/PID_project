@@ -7,8 +7,10 @@ from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 
 import queryrequest
+from constants import DEFAULT_ALGORITHM
 from dao.dal import DB
 from queryrequest import QueryRequest
+from recommendation_system.algorithm_impl.cusom_algorithm import CustomAlgorithm
 from recommendation_system.types.recommendation_response import recommendation_response_from_recommendation_result, \
     RecommendationResponse
 from recommendation_system.algorithm_impl.ziegler_nichols import ZieglerNichols
@@ -27,16 +29,18 @@ class Server:
         self.uploads_dir = os.path.join(app.instance_path, 'uploads')
 
     def query_endpoint(self):
-        query_request = queryrequest.flask_request_to_request(request)
+        query_request, algorithm_name = queryrequest.flask_request_to_request(request)
         file = request.files['file']
-        result = self.query(query_request, file)
+        result = self.query(query_request, file, algorithm_name)
         ret = jsonify(result.__dict__)
         return ret
 
-    def query(self, query_request: QueryRequest, file: FileStorage) -> RecommendationResponse:
-        # self.db.create_request(query_request)
+    def query(self, query_request: QueryRequest, file: FileStorage, algorithm_name: str) -> RecommendationResponse:
+        self.db.create_request(query_request)
         recommendation_request = self.build_recommendation_request(query_request, file)
-        result: RecommendationResult = self.recommender.recommend(recommendation_request)
+        result: RecommendationResult = \
+            self.recommender.recommend(recommendation_request) if algorithm_name == DEFAULT_ALGORITHM \
+                else CustomAlgorithm(algorithm_name).recommend(recommendation_request)
         return recommendation_response_from_recommendation_result(result, recommendation_request.set_point)
 
     def build_recommendation_request(self, query_request: QueryRequest, file: FileStorage):
@@ -58,7 +62,7 @@ class Server:
             return jsonify({'result': True})
 
     def get_algorithms(self):
-        ret = []
+        ret = [DEFAULT_ALGORITHM]
         os.makedirs(self.uploads_dir, exist_ok=True)
         for file in os.listdir(self.uploads_dir):
             if file.endswith(".py"):

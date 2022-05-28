@@ -17,8 +17,8 @@ class RecommendationResponse:
         self.recommended_i = recommended_i
         self.recommended_d = recommended_d
         self.set_point = set_point
-        self.graph_before = graph_before
-        self.graph_after = graph_after
+        self.graph_before = list(map(lambda entry: (entry[0] - graph_before[0][0], entry[1]), graph_before))
+        self.graph_after = list(map(lambda entry: (entry[0] - graph_after[0][0], entry[1]), graph_after))
 
     def __eq__(self, other):
         return self.current_p == other.current_p and self.current_i == other.current_i and \

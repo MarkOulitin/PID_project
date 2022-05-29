@@ -3,7 +3,7 @@ import {uploadFile,uploadFileWithSend, fillInputFields, clearInputFields} from '
 
 test('Complete Happy Flow', async ({ page }) => {
   await page.goto('http://localhost:3000/');
-  await fillInputFields(page,"Oven","50","0.5","0.5","0.5","0","45");
+  await fillInputFields(page,"test","50","0.5","0.5","0.5","0","45");
   await uploadFileWithSend(page);
   await page.waitForURL('**/output');
 });
@@ -66,12 +66,27 @@ test('Insert valid fields, with file field empty', async ({ page }) => {
   await page.waitForURL('**/');
 });
 
-test('Set point optional', async ({ page }) => {
+// test('Set point optional', async ({ page }) => {
+//   await page.goto('http://localhost:3000/');
+//   await fillInputFields(page,"Oven","","0.5","0.5","0.5","0","45");
+//   await uploadFileWithSend(page);
+//   await page.waitForURL('**/output');
+// });
+
+test('PLC path empty', async ({ page }) => {
   await page.goto('http://localhost:3000/');
-  await fillInputFields(page,"Oven","","0.5","0.5","0.5","0","45");
-  await uploadFileWithSend(page);
-  await page.waitForURL('**/output');
+  await fillInputFields(page,"","5","0.5","0.5","0.5","0","45");
+  await uploadFile(page);
+  await page.locator('button:has-text("SEND QUERY")').isDisabled();
+  await page.waitForURL('**/');
 });
+
+test('Info rendered correctly', async ({ page }) => {
+  await page.goto('http://localhost:3000/');
+  await page.locator('text="Info!"');
+  await page.locator('text=Fill the provided fields and upload a CSV file');
+});
+
 
 
 

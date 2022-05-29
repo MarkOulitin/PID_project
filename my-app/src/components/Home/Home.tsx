@@ -158,9 +158,11 @@ export const Home: React.FC = () => {
 							iVal: response.data.recommended_i,
 							dVal: response.data.recommended_d,
 						},
-						setPoint: 100,
-						graphBefore: [...Array(100)].map((val, index) => [index, index]),
-						graphAfter: [...Array(100)].map((val, index) => [index, index]),
+						setPoint: response.data.set_point,
+						// graphBefore: [...Array(100)].map((val, index) => [index, index]),
+						// graphAfter: [...Array(100)].map((val, index) => [index, index]),
+						graphBefore: response.data.graph_before,
+						graphAfter: response.data.graph_after,
 					},
 				});
 			})

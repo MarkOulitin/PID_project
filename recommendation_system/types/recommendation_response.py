@@ -17,8 +17,12 @@ class RecommendationResponse:
         self.recommended_i = recommended_i
         self.recommended_d = recommended_d
         self.set_point = set_point
-        self.graph_before = list(map(lambda entry: (entry[0] - graph_before[0][0], entry[1]), graph_before))
-        self.graph_after = list(map(lambda entry: (entry[0] - graph_after[0][0], entry[1]), graph_after))
+        before_min = graph_before[0][0]
+        before_max = graph_before[0][len(graph_before[0] - 1)]
+        after_min = graph_after[0][0]
+        after_max = graph_after[0][len(graph_after[0] - 1)]
+        self.graph_before = list(map(lambda entry: (__normalize__(entry[0], before_min, before_max), entry[1]), graph_before))
+        self.graph_after = list(map(lambda entry: (__normalize__(entry[0], after_min, after_max), entry[1]), graph_after))
 
     def __eq__(self, other):
         return self.current_p == other.current_p and self.current_i == other.current_i and \
@@ -26,6 +30,10 @@ class RecommendationResponse:
                self.recommended_i == other.recommended_i and self.recommended_d == other.recommended_d and \
                self.set_point == other.set_point and self.graph_before == other.graph_before and \
                self.graph_after == other.graph_after
+
+
+def __normalize__(value, min, max):
+    return ((value - min) / (max - min)) * 100
 
 
 def recommendation_response_from_recommendation_result(rec: RecommendationResult,
@@ -47,11 +55,12 @@ def recommendation_response_from_recommendation_result(rec: RecommendationResult
         graph_after
     )
 
+
 def default_recommendation_response(p, i, d, set_point, simulation_data: List[SimulationData]):
     graph_before = list(zip(list(map(lambda entry: entry.timestamp, simulation_data)),
                             list(map(lambda entry: entry.process_value, simulation_data))))
     graph_after = list(zip(list(map(lambda entry: entry.timestamp, simulation_data)),
-                            list(map(lambda entry: entry.process_value + 1, simulation_data))))
+                           list(map(lambda entry: entry.process_value + 1, simulation_data))))
     return RecommendationResponse(
         p, i, d,
         p + 1, i + 1, d + 1,

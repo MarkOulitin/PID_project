@@ -18,9 +18,9 @@ class RecommendationResponse:
         self.recommended_d = recommended_d
         self.set_point = set_point
         before_min = graph_before[0][0]
-        before_max = graph_before[0][len(graph_before[0] - 1)]
+        before_max = graph_before[0][len(graph_before[0]) - 1]
         after_min = graph_after[0][0]
-        after_max = graph_after[0][len(graph_after[0] - 1)]
+        after_max = graph_after[0][len(graph_after[0]) - 1]
         self.graph_before = list(map(lambda entry: (__normalize__(entry[0], before_min, before_max), entry[1]), graph_before))
         self.graph_after = list(map(lambda entry: (__normalize__(entry[0], after_min, after_max), entry[1]), graph_after))
 

@@ -10,7 +10,7 @@ import queryrequest
 from constants import DEFAULT_ALGORITHM, TEST
 from dao.dal import DB
 from queryrequest import QueryRequest
-from recommendation_system.algorithm_impl.cusom_algorithm import CustomAlgorithm
+from recommendation_system.algorithm_impl.custom_algorithm import CustomAlgorithm
 from recommendation_system.types.recommendation_response import recommendation_response_from_recommendation_result, \
     RecommendationResponse, default_recommendation_response
 from recommendation_system.algorithm_impl.ziegler_nichols import ZieglerNichols

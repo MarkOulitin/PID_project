@@ -29,6 +29,7 @@ def insert_query_request(query_request: QueryRequest, conn: Connection):
     conn.commit()
     conn.close()
 
+
 def get_query_requests_by_plc_path(plc_path: str, conn: Connection) -> List[QueryRequest]:
     cursor = conn.cursor()
     cursor.execute("""
@@ -40,8 +41,12 @@ def get_query_requests_by_plc_path(plc_path: str, conn: Connection) -> List[Quer
     return list(
         map(lambda query_request: QueryRequest(query_request[0], query_request[1], query_request[2], query_request[3],
                                                query_request[4], query_request[5], query_request[6], query_request[7],
-                                               ),
-            result))
+                                               ), result))
+
+
+def save_sample(path: str, value: str, conn: Connection):
+    # should be path: str, value: str, timestamp: time/int (whatever is nice)
+    pass
 
 
 class DB:
@@ -53,6 +58,9 @@ class DB:
 
     def get_query_requests(self, plc_path: str) -> List[QueryRequest]:
         return get_query_requests_by_plc_path(plc_path, sqlite3.connect(db_name))
+
+    def save_sample(self, path: str, value: str):
+        return save_sample(path, value, sqlite3.connect(db_name))
 
 
 if __name__ == "__main__":

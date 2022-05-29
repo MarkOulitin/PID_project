@@ -7,6 +7,7 @@ from string import ascii_lowercase as letters
 
 from werkzeug.datastructures import FileStorage
 
+from constants import DEFAULT_ALGORITHM
 from queryrequest import QueryRequest
 from recommendation_system.types.recommendation_response import RecommendationResponse
 from recommendation_system.types.recommendation_types import PID, RecommendationRequest, RecommendationResult, PidDataPoints, SimulationData, \
@@ -37,7 +38,7 @@ class TestServer(unittest.TestCase):
 
         with open('resources/data/test1.csv', 'rb') as fp:
             file = FileStorage(fp)
-            query = server.query(request, file)
+            query = server.query(request, file, DEFAULT_ALGORITHM)
             correct = RecommendationResponse(
                     response.old_pid.p,
                     response.old_pid.i,

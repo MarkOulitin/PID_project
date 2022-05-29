@@ -61,6 +61,7 @@ export const Home: React.FC = () => {
 	const [plcSetPoint, setPlcSetPoint] = useState<string>();
 	const [loader, setLoader] = useState<boolean>(false);
 	const [errorFlag, setErrorFlag] = useState<boolean>(false);
+	const [errorMsg, setErrorMsg] = useState<string>("");
 	const [algoIndex, setAlgoIndex] = useState<number>(0);
 	const [pidValues, setPidValues] = useState<PIDNumbers>({
 		pVal: "",
@@ -203,7 +204,13 @@ export const Home: React.FC = () => {
 		<WidthContainer>
 			{loader && <Loader />}
 			{errorFlag && (
-				<Error data={{ error: "Error", errorToggle: errorToggle }} />
+				<Error
+					data={{
+						errorMsg: errorMsg,
+						errorFlag: errorFlag,
+						errorToggle: errorToggle,
+					}}
+				/>
 			)}
 			<HeaderContainer>
 				<H1Header>OPC Query</H1Header>

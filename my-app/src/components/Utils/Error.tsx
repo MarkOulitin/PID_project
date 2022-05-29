@@ -1,24 +1,46 @@
 import React from "react";
-import { MiddleScreenContainer } from "./utils.styled";
-import { H1Error, H2Error, ErrorContainer, ErrorButton } from "./utils.styled";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import Modal from "@mui/material/Modal";
+
+const style = {
+	position: "absolute" as "absolute",
+	top: "50%",
+	left: "50%",
+	transform: "translate(-50%, -50%)",
+	width: 400,
+	bgcolor: "background.paper",
+	border: "2px solid #000",
+	boxShadow: 24,
+	p: 4,
+};
 
 interface ErrorProps {
 	data: {
-		error: string;
+		errorMsg: string;
+		errorFlag: boolean;
 		errorToggle: () => void;
 	};
 }
 export const Error: React.FC<ErrorProps> = ({
-	data: { error, errorToggle },
+	data: { errorMsg, errorFlag, errorToggle },
 }) => {
 	return (
-		<MiddleScreenContainer>
-			<ErrorContainer>
-				<H1Error>Error!</H1Error>
-				<H2Error>Something went wrong</H2Error>
-				<H2Error>{error}</H2Error>
-				<ErrorButton onClick={() => errorToggle()}>OK</ErrorButton>
-			</ErrorContainer>
-		</MiddleScreenContainer>
+		<Modal
+			open={errorFlag}
+			onClose={errorToggle}
+			aria-labelledby="modal-modal-title"
+			aria-describedby="modal-modal-description"
+		>
+			<Box sx={style}>
+				<Typography id="modal-modal-title" variant="h6" component="h2">
+					Server Error
+				</Typography>
+				<Typography id="modal-modal-description" sx={{ mt: 2 }}>
+					{errorMsg}
+				</Typography>
+			</Box>
+		</Modal>
 	);
 };

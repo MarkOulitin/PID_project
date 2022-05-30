@@ -29,7 +29,7 @@ class ModelBuilder:
                     break
                 except:
                     pass
-            if h:
+            if h is not None:
                 break
 
         def H(nr, nc, dr=0, dc=0):
@@ -37,9 +37,9 @@ class ModelBuilder:
 
         M = H(2, 2)
         MA = H(2, 2, 0, 1)
-        # MC = H(1, 2)
+        MC = H(1, 2)
         MB = H(2, 1)
-        
+
         A = around(matmul(MA, inv(M)))
         b = around(MB)
         c = around(matmul(MC, inv(M)))

@@ -86,7 +86,9 @@ export const Home: React.FC = () => {
 				}
 			})
 			.catch((error) => {
+				setErrorMsg(error.response.data);
 				setErrorFlag(true);
+				setLoader(false);
 			});
 	}, []);
 
@@ -144,8 +146,6 @@ export const Home: React.FC = () => {
 				},
 			})
 			.then((response) => {
-				console.log(response.data.graph_before);
-
 				navigate("/output", {
 					state: {
 						pidBefore: {
@@ -167,7 +167,9 @@ export const Home: React.FC = () => {
 				});
 			})
 			.catch((error) => {
+				setErrorMsg(error.response.data);
 				setErrorFlag(true);
+				setLoader(false);
 			});
 	};
 

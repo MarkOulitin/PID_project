@@ -35,7 +35,7 @@ export const Error: React.FC<ErrorProps> = ({
 		>
 			<Box sx={style}>
 				<Typography id="modal-modal-title" variant="h6" component="h2">
-					Server Error
+					<h1>Server Error</h1>
 				</Typography>
 				<Typography id="modal-modal-description" sx={{ mt: 2 }}>
 					{errorMsg}

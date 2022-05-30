@@ -54,7 +54,7 @@ export const Output: React.FC = () => {
 				},
 				{
 					label: "Set Point",
-					data: Array.from(Array(points.length).keys()).map((val) => {
+					data: Array.from(Array(100).keys()).map((val) => {
 						return { x: val, y: setPoint };
 					}),
 					borderColor: "rgb(53, 162, 235)",

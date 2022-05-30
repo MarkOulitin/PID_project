@@ -19,8 +19,8 @@ def normalize_data(data):
 
 
 def interpolate_data(xs, ys, slope_thresh=10 ** (-3)):
-    plt.plot(xs, ys)
-    plt.show()
+    # plt.plot(xs, ys)
+    # plt.show()
     func = interpolate.UnivariateSpline(xs, ys)
     derivate_once = func.derivative(n=1)
     derivated_twice = derivate_once.derivative(n=1)

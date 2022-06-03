@@ -2,7 +2,6 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { formRules } from "../../MockData/Data";
-import { GridElement } from "../GridElement/GridElement";
 import { PLCData } from "../PLCData/PLCData";
 import { Algorithms } from "../Algorithms/Algorithms";
 import { ManualPID } from "../PID/ManualPID";
@@ -11,13 +10,7 @@ import { Error } from "../Utils/Error";
 import Loader from "../Utils/Loader";
 import { H1Header, HeaderContainer } from "../Utils/utils.styled";
 import { Button, WidthContainer, InputFile, Label, Span } from "./Home.styled";
-import {
-	PIDNumbers,
-	QueryData,
-	SimulationData,
-	ResponseData,
-	Response,
-} from "./Home.types";
+import { PIDNumbers, SimulationData, Response } from "./Home.types";
 import Send from "@mui/icons-material/Send";
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
 import Stack from "@mui/material/Stack";
@@ -49,7 +42,6 @@ export const validationSchema = Yup.object({
 
 export const Home: React.FC = () => {
 	const statusOk = 200;
-	const statusError = 500;
 	const navigate = useNavigate();
 	const [algorithmNames, setAlgorithmNames] = useState<string[]>([
 		"No algorithms available",
@@ -108,21 +100,6 @@ export const Home: React.FC = () => {
 		setButtonToggle(validation && file !== undefined);
 	}, [file, algoFile, plcPath, plcSetPoint, pidValues, timeValue]);
 
-	const test = () => {
-		setTimeout(() => {
-			setLoader(false);
-			navigate("/output", {
-				state: {
-					pidBefore: { pVal: 1, iVal: 1.5, dVal: 1.2 },
-					pidAfter: { pVal: 1.5, iVal: 1.7, dVal: 1.3 },
-					setPoint: 100,
-					graphBefore: Array.from(Array(60).keys()).map((x) => x * 10),
-					graphAfter: Array.from(Array(60).keys()).map((x) => x * 10),
-				},
-			});
-		}, 3000);
-	};
-
 	const sendQuery = () => {
 		setLoader(true);
 		let formData = new FormData();
@@ -159,8 +136,6 @@ export const Home: React.FC = () => {
 							dVal: response.data.recommended_d,
 						},
 						setPoint: response.data.set_point,
-						// graphBefore: [...Array(100)].map((val, index) => [index, index]),
-						// graphAfter: [...Array(100)].map((val, index) => [index, index]),
 						graphBefore: response.data.graph_before,
 						graphAfter: response.data.graph_after,
 					},

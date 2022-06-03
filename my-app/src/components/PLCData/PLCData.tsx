@@ -24,7 +24,7 @@ export const PLCData: React.FC<PLCProps> = ({
 			>
 				<TextField
 					label={plcTitle}
-					value={plcPath}
+					value={plcPath ?? ""}
 					onChange={(e) => changePLC(e.target.value)}
 				/>
 			</Box>

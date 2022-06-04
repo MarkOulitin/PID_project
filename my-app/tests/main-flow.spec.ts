@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test ,expect} from '@playwright/test';
 import {uploadFile,uploadFileWithSend, fillInputFields, clearInputFields,uploadPythonFile} from './helper';
 
 test('Complete Happy Flow', async ({ page }) => {
@@ -104,6 +104,54 @@ test('Custom Algo name added', async ({ page }) => {
   await page.locator('text="NewAlgo.py"').click();
 });
 
+test('10 users requesting calculations Happy Flow', async ({ page,browserName  }) => {
+  let i = 0;
+  if(browserName === 'chromium'){
+    do {
+  
+      await page.goto('http://localhost:3000/');
+      await fillInputFields(page,"test","50","0.5","0.5","0.5","0","45");
+      await uploadFileWithSend(page);
+      await page.waitForURL('**/output');
+      await page.waitForTimeout(100);
+      i++;
+      } while (i < 10);
+  }
+});
 
+test('Only 1 checkbox can be checked', async ({ page  }) => {
+    await page.goto('http://localhost:3000/');
+    await page.waitForSelector("input[type=checkbox]");
+    const checkBoxes = await page.$$("input[type=checkbox]");
+    let counter = 0;
+    for(let i = 0 ; i < checkBoxes.length; i++){
+      const val = await checkBoxes[i].isChecked();
+      if(val === true) {
+        counter++;
+      }
+    }
+    expect(counter).toBe(1);
+    await fillInputFields(page,"test","50","0.5","0.5","0.5","0","45");
+    await uploadFileWithSend(page);
+    await page.waitForURL('**/output');
+});
 
-
+test('Only 1 checkbox can be checked even after checking another one', async ({ page  }) => {
+    await page.goto('http://localhost:3000/');
+    await page.waitForSelector("input[type=checkbox]");
+    const checkBoxes = await page.$$("input[type=checkbox]");
+    let counter = 0;
+    if(checkBoxes.length >= 2){
+      await checkBoxes[checkBoxes.length-1].check();
+      for(let i = 0 ; i < checkBoxes.length; i++){
+        const val = await checkBoxes[i].isChecked();
+        if(val === true) {
+          counter++;
+        }
+      }
+      await fillInputFields(page,"test","50","0.5","0.5","0.5","0","45");
+      await uploadFileWithSend(page);
+      await page.waitForURL('**/output');
+    }
+    expect(counter).toBe(1);
+});

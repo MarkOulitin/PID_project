@@ -201,7 +201,7 @@ export const Home: React.FC = () => {
 				/>
 			)}
 			<HeaderContainer>
-				<H1Header>OPC Query</H1Header>
+				<H1Header>Server Query</H1Header>
 			</HeaderContainer>
 			<Algorithms algorithmIndex={setAlgoIndex} names={algorithmNames} />
 			<PLCData

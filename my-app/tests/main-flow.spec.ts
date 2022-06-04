@@ -104,11 +104,10 @@ test('Custom Algo name added', async ({ page }) => {
   await page.locator('text="NewAlgo.py"').click();
 });
 
-test('10 users requesting calculations Happy Flow', async ({ page,browserName  }) => {
+test.skip('10 users requesting calculations Happy Flow', async ({ page,browserName  }) => {
   let i = 0;
   if(browserName === 'chromium'){
     do {
-  
       await page.goto('http://localhost:3000/');
       await fillInputFields(page,"test","50","0.5","0.5","0.5","0","45");
       await uploadFileWithSend(page);

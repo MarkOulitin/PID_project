@@ -23,8 +23,6 @@ class CustomAlgorithm(Algorithm):
         param = json.dumps(param)
         python_exec_string = 'python3 {} \'{}\' > {} 2> {}'.format(self.file_name, param, task_id, task_id)
         result = os.system(python_exec_string)
-        # if result != 0:
-        #     raise CustomAlgorithmFailed('Custom algorithm failed with code {}'.format(result))
         with open(task_id) as file:
             try:
                 result = json.load(file)
@@ -36,10 +34,3 @@ class CustomAlgorithm(Algorithm):
         except:
             pass
         return PID(result['p'], result['i'], result['d'])
-
-
-# if __name__ == '__main__':
-#     print(CustomAlgorithm('/Users/tomsandalon/Desktop/something.py').recommend([
-#         SimulationData(1, 2, 3, 4),
-#         SimulationData(5, 6, 7, 8)
-#     ], 1).p)

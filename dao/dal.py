@@ -4,8 +4,9 @@ from sqlite3 import Connection
 from typing import List
 
 from dao.constants import db_name, \
-    query_request_create_statement
+    query_request_create_statement, samples_create_statement
 from queryrequest import QueryRequest
+from sampler.sample import Sample
 
 
 def initialize(debug=False):
@@ -16,6 +17,7 @@ def initialize(debug=False):
             pass
     conn = sqlite3.connect(db_name)
     conn.execute(query_request_create_statement)
+    conn.execute(samples_create_statement)
     conn.close()
 
 
@@ -44,9 +46,14 @@ def get_query_requests_by_plc_path(plc_path: str, conn: Connection) -> List[Quer
                                                ), result))
 
 
-def save_sample(path: str, value: str, conn: Connection):
-    # should be path: str, value: str, timestamp: time/int (whatever is nice)
-    pass
+def save_sample(sample: Sample, conn: Connection):
+    conn.cursor().execute("""
+        INSERT INTO Samples(id, Path, Value)
+        VALUES(?, ?, ?)
+        """, (sample.id, sample.path, sample.value)
+                          )
+    conn.commit()
+    conn.close()
 
 
 class DB:
@@ -59,12 +66,16 @@ class DB:
     def get_query_requests(self, plc_path: str) -> List[QueryRequest]:
         return get_query_requests_by_plc_path(plc_path, sqlite3.connect(db_name))
 
-    def save_sample(self, path: str, value: str):
-        return save_sample(path, value, sqlite3.connect(db_name))
+    def save_sample(self, sample: Sample):
+        return save_sample(sample, sqlite3.connect(db_name))
 
 
 if __name__ == "__main__":
     db = DB()  # for tomer
+    sample1 = Sample("path", "value")
+    sample2 = Sample("path2", "value2")
+    db.save_sample(sample1)
+    db.save_sample(sample2)
     # request1 = QueryRequest("1", 2, 3, 4, 5, 6, 'YO')
     # request2 = QueryRequest("2", 2, 3, 4, 5, 6, 'YO')
     # request3 = QueryRequest("3", 2, 3, 4, 5, 6, 'NO')

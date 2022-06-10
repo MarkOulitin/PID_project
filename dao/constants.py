@@ -14,3 +14,12 @@ query_request_create_statement = """
             PRIMARY KEY("id")
         )
     """
+samples_create_statement = """
+        CREATE TABLE IF NOT EXISTS "Samples" (
+            "id"    TEXT,
+            "Path"	TEXT,
+            "Value"	TEXT,
+            Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY("id")
+        )
+    """

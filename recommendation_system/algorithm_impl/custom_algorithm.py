@@ -21,7 +21,8 @@ class CustomAlgorithm(Algorithm):
         task_id = uuid.uuid4().__str__()
         param = {'samples': list(map(lambda sample: sample.to_json(), samples)), 'set_point': set_point}
         param = json.dumps(param)
-        python_exec_string = 'python3 {} \'{}\' > {} 2> {}'.format(self.file_name, param, task_id, task_id)
+        file_name = os.path.join("instance", "uploads", self.file_name)
+        python_exec_string = 'python3 {} \'{}\' > {} 2> {}'.format(file_name, param, task_id, task_id)
         result = os.system(python_exec_string)
         with open(task_id) as file:
             try:

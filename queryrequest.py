@@ -24,7 +24,6 @@ class QueryRequest:
                  simulation_seconds,
                  set_point,
                  id=None):
-        self.id = id
         self.plc_path = plc_path
         self.p = p
         self.i = i

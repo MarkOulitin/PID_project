@@ -66,8 +66,9 @@ class DB:
     def get_query_requests(self, plc_path: str) -> List[QueryRequest]:
         return get_query_requests_by_plc_path(plc_path, sqlite3.connect(db_name))
 
-    def save_sample(self, sample: Sample):
-        return save_sample(sample, sqlite3.connect(db_name))
+    # Uncomment when the factory is ready to transition to OPC-UA
+    # def save_sample(self, sample: Sample):
+    #     return save_sample(sample, sqlite3.connect(db_name))
 
 
 if __name__ == "__main__":

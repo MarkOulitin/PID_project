@@ -48,7 +48,7 @@ class Server:
                                             recommendation_request.simulation_data)
         result: RecommendationResult = \
             self.recommender.recommend(recommendation_request) if algorithm_name == DEFAULT_ALGORITHM \
-            else CustomAlgorithm(algorithm_name).recommend(recommendation_request)
+            else CustomAlgorithm(algorithm_name).recommend(recommendation_request.simulation_data, query_request.set_point)
         return recommendation_response_from_recommendation_result(result, recommendation_request.set_point)
 
     def build_recommendation_request(self, query_request: QueryRequest, file: FileStorage):

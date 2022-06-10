@@ -1,14 +1,9 @@
 import unittest
 
 import control as control
-import scipy.integrate as integrate
-import scipy.fft as fft
-import pandas as pd
 import control.matlab as matlab
 import numpy as np
-from numpy.linalg import matrix_rank, inv
-from numpy import matmul, around
-import matplotlib.pyplot as plt
+import scipy.fft as fft
 
 from recommendation_system.model_builder import ModelBuilder
 from recommendation_system.types.recommendation_types import SimulationData, PID
@@ -22,13 +17,6 @@ def simulation_data_from_values(T, p, i, d, Y, U, R):
     return ret
 
 
-# self.timestamp = timestamp
-# self.pid = pid
-# self.process_value = process_value
-# self.pid_value = out_value
-# self.set_point = set_point
-
-
 class TestModelFitting(unittest.TestCase):
     def test_model_fitting(self):
 
@@ -37,7 +25,6 @@ class TestModelFitting(unittest.TestCase):
         T = np.arange (0, duration, sampling_delta)
         samples_amount = T.shape[0]
         R = np.ones(samples_amount)
-        # plant = control.sample_system(matlab.tf([1], [1, 1]),.1)
         plant = control.sample_system(matlab.tf([1,4,5], [4,1, 3]),.1)
 
         p = 1.1

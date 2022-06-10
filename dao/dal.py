@@ -71,6 +71,7 @@ class DB:
     #     return save_sample(sample, sqlite3.connect(db_name))
 
 
+#TODO tomer move this into a test folder for the db
 if __name__ == "__main__":
     db = DB()  # for tomer
     sample1 = Sample("path", "value")

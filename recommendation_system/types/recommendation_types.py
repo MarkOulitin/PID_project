@@ -6,8 +6,6 @@ from typing import List
 import pandas
 from werkzeug.datastructures import FileStorage
 
-from constants import REQUEST_FILTER_THRESHOLD, NotEnoughValues
-
 
 class PID:
     def __init__(self,
@@ -125,9 +123,3 @@ class RecommendationResult:
 class PLC:
     def __init__(self, name):
         self.name = name
-
-
-if __name__ == "__main__":
-    with open('/Users/tomsandalon/Downloads/TEST2 copy 2.csv', 'rb') as fp:
-        a = simulation_data_from_file(FileStorage(fp))
-        print(a)

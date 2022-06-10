@@ -1,8 +1,5 @@
-import random
 from numbers import Number
 from typing import List
-
-import numpy as np
 
 from recommendation_system.types.recommendation_types import RecommendationResult, SimulationData
 
@@ -56,6 +53,7 @@ def recommendation_response_from_recommendation_result(rec: RecommendationResult
     )
 
 
+# Used for default response in-case of tests
 def default_recommendation_response(p, i, d, set_point, simulation_data: List[SimulationData]):
     graph_before = list(zip(list(map(lambda entry: entry.timestamp, simulation_data)),
                             list(map(lambda entry: entry.process_value, simulation_data))))

@@ -23,8 +23,6 @@ class Simulator:
         # to samples of system behavior
         time_samples = self.makeTimeSamples(t_limit=t_limit, t_step=t_step)
         u_ref = self.array_map(self.__set_point, np.ones(time_samples.shape))
-        # TODO add initial signal as u_input to closed_loop tf. consult with gera about if it's valid. 
-        # u_input = self.initial_signal * np.ones(time_samples.shape)
         u_input = np.zeros(time_samples.shape)
         out = lsim(closed_loop, u_ref - u_input, time_samples)
         return out[1], out[0]

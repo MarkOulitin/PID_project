@@ -71,13 +71,19 @@ class Server:
         except:
             return None
 
-    def get_algorithms(self):
+    def get_algorithms_endpoint(self):
+        ret = self.get_algorithms()
+        return jsonify({'result': ret})
+
+    def get_algorithms(self, prefix=None):
+        if prefix is None:
+            prefix = self.uploads_dir
         ret = [DEFAULT_ALGORITHM]
-        os.makedirs(self.uploads_dir, exist_ok=True)
-        for file in os.listdir(self.uploads_dir):
+        os.makedirs(prefix, exist_ok=True)
+        for file in os.listdir(prefix):
             if file.endswith(".py"):
                 ret.append(file)
-        return jsonify({'result': ret})
+        return ret
 
 
 server = Server()
@@ -97,7 +103,7 @@ def act():
 @app.route(rule='/algorithm', methods=('GET', 'POST'))
 @cross_origin()
 def algo():
-    return server.get_algorithms() if request.method == 'GET' else None
+    return server.get_algorithms_endpoint() if request.method == 'GET' else None
 
 
 if __name__ == "__main__":

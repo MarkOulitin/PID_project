@@ -29,7 +29,7 @@ class Server:
         self.uploads_dir = os.path.join(app.instance_path, 'uploads')
 
     def query_endpoint(self):
-        algorithm_file_name = server.upload_algorithm()
+        algorithm_file_name = server.upload_algorithm_endpoint()
         query_request, algorithm_name = queryrequest.flask_request_to_request(
             request)
         if algorithm_file_name:
@@ -44,32 +44,38 @@ class Server:
         recommendation_request = self.build_recommendation_request(
             query_request, file)
         if query_request.plc_path == TEST:
-            return default_recommendation_response(query_request.p, query_request.i, query_request.d, query_request.set_point,
-                                            recommendation_request.simulation_data)
+            return default_recommendation_response(query_request.p, query_request.i, query_request.d,
+                                                   query_request.set_point,
+                                                   recommendation_request.simulation_data)
         result: RecommendationResult = \
             self.recommender.recommend(recommendation_request) if algorithm_name == DEFAULT_ALGORITHM \
-            else CustomAlgorithm(algorithm_name).recommend(recommendation_request.simulation_data, query_request.set_point)
+                else CustomAlgorithm(algorithm_name).recommend(recommendation_request.simulation_data,
+                                                               query_request.set_point)
         return recommendation_response_from_recommendation_result(result, recommendation_request.set_point)
 
     def build_recommendation_request(self, query_request: QueryRequest, file: FileStorage):
         pid = PID(query_request.p, query_request.i, query_request.d)
         set_point = query_request.set_point
         convergence_time = query_request.simulation_seconds + \
-            (query_request.simulation_minutes * 60)
+                           (query_request.simulation_minutes * 60)
         simulation_data = simulation_data_from_file(file)
         return RecommendationRequest(set_point, pid, int(convergence_time), simulation_data)
 
-    def upload_algorithm(self):
+    def upload_algorithm_endpoint(self):
         try:
             file = request.files['algorithmFile']
-            if not file.filename.endswith('.py'):
-                raise Exception
-            os.makedirs(self.uploads_dir, exist_ok=True)
-            file.save(os.path.join(self.uploads_dir,
-                      secure_filename(file.filename)))
-            return file.filename
+            return self.upload_algorithm(file)
         except:
             return None
+
+    def upload_algorithm(self, file: FileStorage, prefix=None):
+        if prefix is None:
+            prefix = self.uploads_dir
+        if not file.filename.endswith('.py'):
+            raise Exception
+        os.makedirs(prefix, exist_ok=True)
+        file.save(os.path.join(prefix, secure_filename(file.filename)))
+        return file.filename
 
     def get_algorithms_endpoint(self):
         ret = self.get_algorithms()

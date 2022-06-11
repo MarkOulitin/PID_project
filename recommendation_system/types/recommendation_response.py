@@ -30,6 +30,8 @@ class RecommendationResponse:
 
 
 def __normalize__(value, min, max):
+    if min == max:
+        return 1
     return ((value - min) / (max - min)) * 100
 
 

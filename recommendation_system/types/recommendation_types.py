@@ -36,6 +36,10 @@ class SimulationData:  # each represents an entry in samples db
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
 
+def simulation_data_from_dict(d):
+    return SimulationData(d["timestamp"], d["process_value"], d["set_point"], d["pid_value"], d.get("PID"))
+
+
 def normalize_down(simulations_data: List[SimulationData]) -> List[SimulationData]:
     def check_process_value(simulation_data: SimulationData) -> bool:
         return simulation_data.process_value != simulation_data.process_value or simulation_data.process_value is None

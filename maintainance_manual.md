@@ -98,5 +98,17 @@ When the code is ready to be deployed, simply replace the new implementation wit
 The maintainer may choose to display the server response in a different manner. This could be in order to print it in a format that is easy to input to their controllers,
 and even to use a new library which handles graphs differently.
 
-**TODO for lior**
+UI - Maintenance
 
+The validation of the form is the most basic file in the UI and it determines what is considered a valid data, in case of changes one can change the validation scheme and extend the options for user input.
+(https://github.com/MarkOulitin/PID_project/blob/19388dc8ea5fb3531602fffdecb61cb5c2ee6c08/my-app/src/components/Home/Home.tsx#L21)
+
+The UI uses material UI library, meaning if changes are needed to the base component's one can switch between the options available in the material ui library without breaking the code as long as it sticks to the same interface.
+Link to material ui library:
+https://mui.com/material-ui/
+
+The folder structure is easy to use with informative names.
+one can switch components in the main page easily by editing the code in the specific required folder.
+All the UI components can be found under the components folder and be switched out according to necessary use as long as they use the same props.
+Link:
+https://github.com/MarkOulitin/PID_project/tree/master/my-app/src/components

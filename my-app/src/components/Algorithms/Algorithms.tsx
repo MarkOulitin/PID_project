@@ -23,7 +23,10 @@ export const Algorithms: React.FC<AlgorithmProps> = ({
 								control={
 									<Checkbox
 										checked={index === checked ? true : false}
-										onChange={() => setChecked(index)}
+										onChange={() => {
+											algorithmIndex(index);
+											setChecked(index);
+										}}
 									/>
 								}
 							/>

@@ -12,7 +12,8 @@ csv = list(map(lambda entry: simulation_data_from_dict(json.loads(entry)), expec
 
 class TestCSVLoader(unittest.TestCase):
     def test_csv_loaded_correctly(self):
-        with open('resources/data/Example.csv', 'rb') as fp:
+        csv_path = os.path.join(os.getcwd(), 'resources', 'data', 'Example.csv')
+        with open(csv_path, 'rb') as fp:
             file = FileStorage(fp)
             value = simulation_data_from_file(file)
         self.assertEqual(csv, value)

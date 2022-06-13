@@ -2,10 +2,13 @@ import os
 import unittest
 import uuid
 import glob
+from random import randint
 
 from werkzeug.datastructures import FileStorage
 
 from constants import DEFAULT_ALGORITHM
+from recommendation_system.algorithm_impl.custom_algorithm import CustomAlgorithm
+from recommendation_system.types.recommendation_types import simulation_data_from_file
 from server import Server
 
 path = os.path.join(os.getcwd(), 'resources', 'data', 'path_for_files')
@@ -51,4 +54,13 @@ class ExternalAlgorithmTests(unittest.TestCase):
             os.remove(f)
 
     def test_run_algorithm(self):
-        self.assertEqual(True, False)
+        set_point = randint(1, 100)
+        csv_path = os.path.join(os.getcwd(), 'resources', 'data', 'Example.csv')
+        algo_path = os.path.join(os.getcwd(), 'resources', 'mocks', 'mock_algorithm.py')
+        with open(csv_path, 'rb') as fp:
+            file = FileStorage(fp)
+            data = simulation_data_from_file(file)
+        result = CustomAlgorithm(algo_path).recommend(data, set_point)
+        self.assertEqual(result.p, set_point)
+        self.assertEqual(result.i, data[0].pid_value)
+        self.assertEqual(result.d, data[0].process_value)

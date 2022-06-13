@@ -40,7 +40,7 @@ class Server:
         return ret
 
     def query(self, query_request: QueryRequest, file: FileStorage, algorithm_name: str) -> RecommendationResponse:
-        self.db.create_request(query_request)
+        self.db.insert_query_request(query_request)
         recommendation_request = self.build_recommendation_request(
             query_request, file)
         if query_request.plc_path == TEST:

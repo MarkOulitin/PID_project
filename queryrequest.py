@@ -5,8 +5,8 @@ from random import choice
 
 from flask import Request
 
-from constants import DEFAULT_ALGORITHM
-
+# from constants import DEFAULT_ALGORITHM
+DEFAULT_ALGORITHM = ''
 
 def random_path():
     letters = string.ascii_lowercase

@@ -38,7 +38,7 @@ def get_query_requests_by_plc_path(plc_path: str, conn: Connection) -> List[Quer
         SELECT PlcPath, P, I, D, SimulationMinutes, SimulationSeconds, SetPoint, id, Timestamp FROM QueryRequests
         WHERE PlcPath = ?
         ORDER BY Timestamp DESC
-    """, (plc_path))
+    """, [plc_path])
     result = cursor.fetchall()
     return list(
         map(lambda query_request: QueryRequest(query_request[0], query_request[1], query_request[2], query_request[3],
@@ -46,7 +46,17 @@ def get_query_requests_by_plc_path(plc_path: str, conn: Connection) -> List[Quer
                                                ), result))
 
 
-def save_sample(sample: Sample, conn: Connection):
+def delete_query_request(id: str, conn: Connection):
+    cursor = conn.cursor()
+    cursor.execute("""
+        DELETE
+        FROM QueryRequests
+        WHERE id = ?
+        """, [id])
+    conn.commit()
+
+
+def insert_sample(sample: Sample, conn: Connection):
     conn.cursor().execute("""
         INSERT INTO Samples(id, Path, Value)
         VALUES(?, ?, ?)
@@ -56,31 +66,51 @@ def save_sample(sample: Sample, conn: Connection):
     conn.close()
 
 
+def get_sample(id: str, conn: Connection):
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT * FROM Samples
+        WHERE id = ?
+        """, [id])
+    result = cursor.fetchone()
+    print(result)
+    return Sample(result[1], result[2], result[0])
+
+
+def delete_sample(id: str, conn: Connection):
+    cursor = conn.cursor()
+    cursor.execute("""
+        DELETE
+        FROM Samples
+        WHERE id = ?
+        """, [id])
+    conn.commit()
+
+
 class DB:
     def __init__(self, debug=False):
         initialize(debug)
 
-    def create_request(self, request: QueryRequest):
+    def insert_query_request(self, request: QueryRequest):
         return insert_query_request(request, sqlite3.connect(db_name))
 
-    def get_query_requests(self, plc_path: str) -> List[QueryRequest]:
+    def get_query_requests_by_path(self, plc_path: str) -> List[QueryRequest]:
         return get_query_requests_by_plc_path(plc_path, sqlite3.connect(db_name))
 
-    def save_sample(self, sample: Sample):
-        return save_sample(sample, sqlite3.connect(db_name))
+    def delete_query_request(self, id: str):
+        return delete_query_request(id, sqlite3.connect(db_name))
+
+    def insert_sample(self, sample: Sample):
+        return insert_sample(sample, sqlite3.connect(db_name))
+
+    def get_sample(self, id: str):
+        return get_sample(id, sqlite3.connect(db_name))
+
+    def delete_sample(self, id: str):
+        return delete_sample(id, sqlite3.connect(db_name))
 
 
 if __name__ == "__main__":
     db = DB()  # for tomer
-    sample1 = Sample("path", "value")
-    sample2 = Sample("path2", "value2")
-    db.save_sample(sample1)
-    db.save_sample(sample2)
-    # request1 = QueryRequest("1", 2, 3, 4, 5, 6, 'YO')
-    # request2 = QueryRequest("2", 2, 3, 4, 5, 6, 'YO')
-    # request3 = QueryRequest("3", 2, 3, 4, 5, 6, 'NO')
-    # db.create_request(request1)
-    # db.create_request(request2)
-    # db.create_request(request3)
-    # for query in db.get_query_requests("1"):
-    #     print(query.id)
+    q1 = QueryRequest('p', 'p', 'p', 'p', 1, 1, 1)
+    db.delete_query_request('f92b1885-1679-4e71-87c0-413878232184')

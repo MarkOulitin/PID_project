@@ -20,7 +20,7 @@ class Sampler:
     def sample(self):
         values = [(path, self.opc.read(path)) for path in self.path_list]
         for path, value in values:
-            self.db.save_sample(path, value)
+            self.db.insert_sample(path, value)
 
 
 """

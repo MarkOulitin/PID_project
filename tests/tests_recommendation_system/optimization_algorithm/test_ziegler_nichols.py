@@ -1,14 +1,8 @@
 import unittest
 
 import control as control
-import scipy.integrate as integrate
-import scipy.fft as fft
-import pandas as pd
 import control.matlab as matlab
 import numpy as np
-from numpy.linalg import matrix_rank, inv
-from numpy import matmul, around
-import matplotlib.pyplot as plt
 
 from recommendation_system.algorithm_impl.ziegler_nichols import ZieglerNichols
 from recommendation_system.types.recommendation_types import SimulationData, PID

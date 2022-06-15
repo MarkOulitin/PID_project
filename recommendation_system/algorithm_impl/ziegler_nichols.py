@@ -1,7 +1,6 @@
 from typing import List
 
 import numpy as np
-from matplotlib import pyplot as plt
 from scipy import interpolate, optimize
 
 from recommendation_system.recommendation_algorithm import Algorithm
@@ -19,12 +18,10 @@ def normalize_data(data):
 
 
 def interpolate_data(xs, ys, slope_thresh=10 ** (-3)):
-    # plt.plot(xs, ys)
-    # plt.show()
     func = interpolate.UnivariateSpline(xs, ys)
     derivate_once = func.derivative(n=1)
     derivated_twice = derivate_once.derivative(n=1)
-    x_root_of_second_derivative = optimize.root(derivated_twice, x0=np.array([[1.]]))['x'][0]  # todo choose the list one with positive gradient
+    x_root_of_second_derivative = optimize.root(derivated_twice, x0=np.array([[1.]]))['x'][0]
     point = (x_root_of_second_derivative, func(x_root_of_second_derivative).item())
     slope = derivate_once(x_root_of_second_derivative).item()
     if abs(slope) < slope_thresh:
@@ -53,11 +50,6 @@ class ZieglerNichols(Algorithm):
         return self.calculate_pid(inflection=inflection_point, gradient=gradient, set_point=set_point)
 
     def calculate_pid(self, inflection, gradient, set_point):
-        # inflection: point where 2nd derivative = 0 and closest to origin
-        # gradient: the gradient at the point
-        # Ziegler Nicols method
-        # tangent: y - y1 = m(x - x1)
-        # tangent_inversed: (y - y1 + mx1)/m = x
         x, y = inflection
         tangent_inversed = lambda output: (output - y + gradient * x) / gradient
         L = tangent_inversed(0)
@@ -66,5 +58,3 @@ class ZieglerNichols(Algorithm):
         K_i = 2 * L
         K_d = 0.5 * L
         return PID(K_p, K_i, K_d)
-
-    # TODO make it safer for data

@@ -6,8 +6,6 @@ from typing import List
 import pandas
 from werkzeug.datastructures import FileStorage
 
-from constants import REQUEST_FILTER_THRESHOLD, NotEnoughValues
-
 
 class PID:
     def __init__(self,
@@ -36,6 +34,10 @@ class SimulationData:  # each represents an entry in samples db
 
     def to_json(self):
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
+
+
+def simulation_data_from_dict(d):
+    return SimulationData(d["timestamp"], d["process_value"], d["set_point"], d["pid_value"], d.get("PID"))
 
 
 def normalize_down(simulations_data: List[SimulationData]) -> List[SimulationData]:
@@ -125,9 +127,3 @@ class RecommendationResult:
 class PLC:
     def __init__(self, name):
         self.name = name
-
-
-if __name__ == "__main__":
-    with open('/Users/tomsandalon/Downloads/TEST2 copy 2.csv', 'rb') as fp:
-        a = simulation_data_from_file(FileStorage(fp))
-        print(a)

@@ -1,10 +1,13 @@
 import json
+import os
 from datetime import datetime
 from numbers import Number
 from typing import List
 
 import pandas
 from werkzeug.datastructures import FileStorage
+
+from queryrequest import QueryRequest
 
 
 class PID:
@@ -64,8 +67,11 @@ def normalize_down(simulations_data: List[SimulationData]) -> List[SimulationDat
     return result
 
 
-def simulation_data_from_file(file: FileStorage) -> List[SimulationData]:
-    f = pandas.read_csv(file.stream, skiprows=1, encoding="utf-8")
+def simulation_data_from_file(file: FileStorage, query_request: QueryRequest = None) -> List[SimulationData]:
+    if query_request and query_request.plc_path == 'test':
+        f = pandas.read_csv(os.path.join(os.getcwd(), 'test', 'resources', 'data', 'ExpectedCsv.py'))
+    else:
+        f = pandas.read_csv(file.stream, skiprows=1, encoding="utf-8")
     ret: List[SimulationData] = []
     for row_tuple in f.iterrows():
         row = row_tuple[1]

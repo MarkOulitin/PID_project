@@ -103,6 +103,7 @@ def handle_exception(e):
 @app.route(rule='/', methods=('GET', 'POST'))
 @cross_origin()
 def act():
+    print(request.form)
     return server.query_endpoint()
 
 

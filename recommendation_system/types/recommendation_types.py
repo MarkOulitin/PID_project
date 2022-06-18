@@ -69,7 +69,7 @@ def normalize_down(simulations_data: List[SimulationData]) -> List[SimulationDat
 
 def simulation_data_from_file(file: FileStorage, query_request: QueryRequest = None) -> List[SimulationData]:
     if query_request and query_request.plc_path == 'test':
-        f = pandas.read_csv(os.path.join(os.getcwd(), 'test', 'resources', 'data', 'ExpectedCsv.py'))
+        f = pandas.read_csv(os.path.join(os.getcwd(), 'tests', 'resources', 'data', 'Example.csv'), skiprows=1, encoding="utf-8")
     else:
         f = pandas.read_csv(file.stream, skiprows=1, encoding="utf-8")
     ret: List[SimulationData] = []

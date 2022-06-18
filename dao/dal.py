@@ -108,9 +108,3 @@ class DB:
 
     def delete_sample(self, id: str):
         return delete_sample(id, sqlite3.connect(db_name))
-
-
-if __name__ == "__main__":
-    db = DB()  # for tomer
-    q1 = QueryRequest('p', 'p', 'p', 'p', 1, 1, 1)
-    db.delete_query_request('f92b1885-1679-4e71-87c0-413878232184')

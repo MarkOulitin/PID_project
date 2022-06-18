@@ -58,7 +58,7 @@ class Server:
         set_point = query_request.set_point
         convergence_time = query_request.simulation_seconds + \
                            (query_request.simulation_minutes * 60)
-        simulation_data = simulation_data_from_file(file)
+        simulation_data = simulation_data_from_file(file, query_request)
         return RecommendationRequest(set_point, pid, int(convergence_time), simulation_data)
 
     def upload_algorithm_endpoint(self):
@@ -103,7 +103,6 @@ def handle_exception(e):
 @app.route(rule='/', methods=('GET', 'POST'))
 @cross_origin()
 def act():
-    print(request.form)
     return server.query_endpoint()
 
 

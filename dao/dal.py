@@ -6,7 +6,7 @@ from typing import List
 from dao.constants import db_name, \
     query_request_create_statement, samples_create_statement
 from queryrequest import QueryRequest
-from sampler.sample import Sample
+from recommendation_system.types.sample import Sample
 
 
 def initialize(debug=False):

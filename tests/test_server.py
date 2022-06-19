@@ -13,8 +13,8 @@ from recommendation_system.types.recommendation_response import RecommendationRe
 from recommendation_system.types.recommendation_types import PID, RecommendationRequest, RecommendationResult, PidDataPoints, SimulationData, \
     simulation_data_from_file
 from server import Server
-from tests.resources.mocks.db_mock import DbMock
-from tests.resources.mocks.recommender_mock import RecommenderMock
+from resources.mocks.db_mock import DbMock
+from resources.mocks.recommender_mock import RecommenderMock
 
 
 class TestServer(unittest.TestCase):

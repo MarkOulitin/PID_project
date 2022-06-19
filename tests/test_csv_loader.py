@@ -5,8 +5,7 @@ import unittest
 from werkzeug.datastructures import FileStorage
 
 from recommendation_system.types.recommendation_types import simulation_data_from_file, simulation_data_from_dict
-from tests.resources.data.ExpectedCsv import expected_csv
-
+from resources.data.ExpectedCsv import expected_csv
 
 csv = list(map(lambda entry: simulation_data_from_dict(json.loads(entry)), expected_csv))
 

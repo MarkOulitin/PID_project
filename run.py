@@ -16,7 +16,7 @@ def handle_server():
     [run(command) for command in [CYTHON, REQUIREMENTS, SERVER]]
 
 
-def handle_client:
+def handle_client():
     [run(command) for command in [NPM_INSTALL, NPM_START]]
 
 if __name__ == "__main__":

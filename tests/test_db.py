@@ -2,7 +2,7 @@ import unittest
 
 from dao.dal import DB
 from queryrequest import QueryRequest
-from sampler.sample import Sample
+from recommendation_system.types.sample import Sample
 
 
 def generate_sample():

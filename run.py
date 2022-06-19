@@ -5,8 +5,7 @@ CYTHON = "python -m pip install cython"
 REQUIREMENTS = "python -m pip install -r requirements.txt"
 SERVER = "python server.py"
 
-CD_MY_APP = f"cd {os.path.join(os.getcwd(), 'my-app')}"
-NPM_INSTALL = f"npm install"
+NPM_INSTALL = f"cd {os.path.join(os.getcwd(), 'my-app')} && npm install"
 NPM_START = f"npm start --prefix {os.path.join(os.getcwd(), 'my-app')}"
 
 def run(command):
@@ -19,7 +18,7 @@ def handle_server():
 
 
 def handle_client():
-    [run(command) for command in [CD_MY_APP, NPM_INSTALL, NPM_START]]
+    [run(command) for command in [NPM_INSTALL, NPM_START]]
 
 if __name__ == "__main__":
     client = Process(target=handle_client)

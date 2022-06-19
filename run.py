@@ -1,4 +1,5 @@
 import os
+from multiprocessing import Process
 
 CYTHON = "python -m pip install cython"
 REQUIREMENTS = "python -m pip install -r requirements.txt"
@@ -20,7 +21,9 @@ def handle_client():
     [run(command) for command in [NPM_INSTALL, NPM_START]]
 
 if __name__ == "__main__":
-    if os.fork() == 0:
-        handle_client()
-    else:
-        handle_server()
+    client = Process(target=handle_client)
+    server = Process(target=handle_server)
+    client.start()
+    server.start()
+    client.join()
+    server.join()

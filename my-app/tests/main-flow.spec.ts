@@ -104,7 +104,7 @@ test('Custom Algo name added', async ({ page }) => {
   await page.locator('text="NewAlgo.py"').click();
 });
 
-test.skip('10 users requesting calculations Happy Flow', async ({ page,browserName  }) => {
+test('5 users requesting calculations Happy Flow', async ({ page,browserName  }) => {
   let i = 0;
   if(browserName === 'chromium'){
     do {
@@ -114,7 +114,7 @@ test.skip('10 users requesting calculations Happy Flow', async ({ page,browserNa
       await page.waitForURL('**/output');
       await page.waitForTimeout(100);
       i++;
-      } while (i < 10);
+      } while (i < 5);
   }
 });
 
